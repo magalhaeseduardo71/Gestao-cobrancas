@@ -1261,8 +1261,8 @@ function inicializarFirebase(config) {
   }).then(snap => {
     mostrarLogin();
   }).catch(() => {
-    localStorage.removeItem('gc_fb_config');
-    mostrarSetup('Banco de dados não encontrado ou sem permissão. Certifique-se de criar o Realtime Database no Firebase Console (Build → Realtime Database) com as regras em modo de teste, depois tente novamente.');
+    // NÃO apaga a configuração salva — apenas avisa. Assim nunca se perde o acesso.
+    mostrarSetup('Não foi possível carregar agora. Verifique sua internet e recarregue a página (o app continua configurado).');
   });
 }
 
@@ -1280,10 +1280,11 @@ function garantirLogin() {
 }
 
 function pedirLoginFirebase(resolve, reject) {
+  // Se cancelar/fechar sem querer, pergunta de novo em vez de perder o acesso.
   const email = prompt('🔐 Login (e-mail):', localStorage.getItem('gc_email') || '');
-  if (!email) { reject(new Error('cancelado')); return; }
+  if (!email) { pedirLoginFirebase(resolve, reject); return; }
   const senha = prompt('🔐 Senha:');
-  if (!senha) { reject(new Error('cancelado')); return; }
+  if (!senha) { pedirLoginFirebase(resolve, reject); return; }
   auth.signInWithEmailAndPassword(email.trim(), senha)
     .then(cred => { localStorage.setItem('gc_email', email.trim()); resolve(cred.user); })
     .catch(err => { alert('Falha no login: ' + err.message); pedirLoginFirebase(resolve, reject); });
