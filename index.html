@@ -13,6 +13,7 @@
   <title>Gestão de Cobranças</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
@@ -1184,6 +1185,7 @@
 //  FIREBASE — estado global
 // ─────────────────────────────
 let db              = null;
+let auth            = null;
 let clientesCache   = [];
 let activeTab       = 'nova';
 let pendingKey      = null;   // chave do Firebase aguardando confirmação
@@ -1243,7 +1245,8 @@ function extrairConfig(texto) {
 
 function inicializarFirebase(config) {
   if (!firebase.apps.length) firebase.initializeApp(config);
-  db = firebase.database();
+  db   = firebase.database();
+  auth = firebase.auth();
 
   document.getElementById('setupScreen').style.display = 'none';
   setSync('🟡 Conectando...');
@@ -1252,14 +1255,39 @@ function inicializarFirebase(config) {
     setSync(snap.val() ? '🟢 Conectado' : '🔴 Offline');
   });
 
-  // Verifica conexão e carrega tela de login
-  db.ref('config/senha').once('value').then(snap => {
-    const temSenha = !!snap.val();
+  // Garante login no Firebase (só pede na 1ª vez neste aparelho), depois carrega o app
+  garantirLogin().then(() => {
+    return db.ref('config/senha').once('value');
+  }).then(snap => {
     mostrarLogin();
   }).catch(() => {
-    localStorage.removeItem('gc_fb_config');
-    mostrarSetup('Banco de dados não encontrado ou sem permissão. Certifique-se de criar o Realtime Database no Firebase Console (Build → Realtime Database) com as regras em modo de teste, depois tente novamente.');
+    // NÃO apaga a configuração salva — apenas avisa. Assim nunca se perde o acesso.
+    mostrarSetup('Não foi possível carregar agora. Verifique sua internet e recarregue a página (o app continua configurado).');
   });
+}
+
+// Garante que há um usuário autenticado no Firebase. A sessão fica salva
+// neste aparelho, então o e-mail/senha só é pedido na primeira vez.
+function garantirLogin() {
+  return new Promise((resolve, reject) => {
+    let resolvido = false;
+    auth.onAuthStateChanged(user => {
+      if (resolvido) return;
+      if (user) { resolvido = true; resolve(user); }
+      else pedirLoginFirebase(u => { resolvido = true; resolve(u); }, reject);
+    });
+  });
+}
+
+function pedirLoginFirebase(resolve, reject) {
+  // Se cancelar/fechar sem querer, pergunta de novo em vez de perder o acesso.
+  const email = prompt('🔐 Login (e-mail):', localStorage.getItem('gc_email') || '');
+  if (!email) { pedirLoginFirebase(resolve, reject); return; }
+  const senha = prompt('🔐 Senha:');
+  if (!senha) { pedirLoginFirebase(resolve, reject); return; }
+  auth.signInWithEmailAndPassword(email.trim(), senha)
+    .then(cred => { localStorage.setItem('gc_email', email.trim()); resolve(cred.user); })
+    .catch(err => { alert('Falha no login: ' + err.message); pedirLoginFirebase(resolve, reject); });
 }
 
 // Inicia o app após login bem-sucedido

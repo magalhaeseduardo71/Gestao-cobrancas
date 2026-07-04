@@ -3,7 +3,13 @@
     "allow": [
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(explorer.exe \"C:\\\\Users\\\\EDUARD~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\D--Claude-VS-Code-Gestao-cobrancas-main\\\\2a6ad67d-4ed8-4ec0-91cb-f3c5a4224fa1\\\\scratchpad\\\\upload\")",
+      "Bash(explorer.exe \"D:\\\\Claude_VS_Code\\\\Gestao-cobrancas-main\")",
+      "Bash(cp index-novo.html \"C:/Users/EDUARD~1/AppData/Local/Temp/claude/D--Claude-VS-Code-Gestao-cobrancas-main/2a6ad67d-4ed8-4ec0-91cb-f3c5a4224fa1/scratchpad/upload/index.html\")",
+      "Bash(cp index-novo.html index.html)",
+      "Bash(rm index-novo.html)",
+      "Bash(rm -rf Gestao-cobrancas-main)"
     ]
   }
 }
