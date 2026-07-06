@@ -363,6 +363,26 @@
 
     /* ══ FILTROS ══ */
     .filter-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+    .btn-olho {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      opacity: 0.5;
+      padding: 4px 6px;
+      border-radius: 8px;
+      transition: opacity 0.15s, background 0.15s;
+    }
+    .btn-olho:hover { opacity: 1; background: rgba(0,0,0,0.05); }
+    /* Oculta valores em R$ quando ativado */
+    .valores-ocultos #statsRow .stat-value,
+    .valores-ocultos #resumoCliente .ri-valor,
+    .valores-ocultos .td-money {
+      filter: blur(7px);
+      user-select: none;
+      transition: filter 0.15s;
+    }
 
     .filter-btn {
       padding: 6px 16px;
@@ -1023,6 +1043,7 @@
         <button class="filter-btn active" data-filtro="todos"  onclick="setFiltroStatus('todos')">Todos</button>
         <button class="filter-btn"        data-filtro="aberto" onclick="setFiltroStatus('aberto')">Em Aberto</button>
         <button class="filter-btn"        data-filtro="pago"   onclick="setFiltroStatus('pago')">Pagos</button>
+        <button class="btn-olho" id="btnOlho" title="Ocultar/mostrar valores" onclick="toggleValores()">👁️</button>
       </div>
 
       <div class="cliente-search-row">
@@ -1906,6 +1927,12 @@ function setFiltroStatus(f) {
   renderTabela();
 }
 
+function toggleValores() {
+  const tab = document.getElementById('tab-clientes');
+  const oculto = tab.classList.toggle('valores-ocultos');
+  document.getElementById('btnOlho').textContent = oculto ? '🙈' : '👁️';
+}
+
 function setFiltroCliente(nome) {
   filtroCliente = nome;
   document.getElementById('btnLimparCliente').style.display = nome ? 'inline-block' : 'none';
@@ -2077,11 +2104,11 @@ function renderTabela() {
     return `<tr${trClass}>
       <td class="td-nome" onclick="selecionarCliente('${nomeEsc}')"><strong>${c.nome}</strong></td>
       <td>${c.dataSolic}</td>
-      <td>${fmt(c.valorA)}</td>
+      <td class="td-money">${fmt(c.valorA)}</td>
       <td>${c.pct > 0 ? c.pct+'%' : '—'}</td>
       <td>${c.dias}d</td>
-      <td><strong>${fmt(c.valorFinal)}</strong></td>
-      <td style="color:var(--green)">${fmt(c.lucro)}</td>
+      <td class="td-money"><strong>${fmt(c.valorFinal)}</strong></td>
+      <td class="td-money" style="color:var(--green)">${fmt(c.lucro)}</td>
       <td>${c.dataPag}</td>
       <td>${badge}</td>
       <td>
