@@ -378,11 +378,39 @@
     /* Oculta valores em R$ quando ativado */
     .valores-ocultos #statsRow .stat-value,
     .valores-ocultos #resumoCliente .ri-valor,
-    .valores-ocultos .td-money {
+    .valores-ocultos .td-money,
+    .valores-ocultos #dashStats .stat-value,
+    .valores-ocultos #tab-dashboard .chart-canvas {
       filter: blur(7px);
       user-select: none;
       transition: filter 0.15s;
     }
+
+    /* Cabeçalho do Dashboard (botão de olho) */
+    .dash-header { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+
+    /* Lista de clientes cadastrados */
+    .cad-list-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .cad-busca {
+      margin-left: auto; flex: 1; min-width: 140px; max-width: 240px;
+      padding: 7px 12px; border: 1px solid #d7dde8; border-radius: 20px;
+      font-size: 0.82rem; outline: none;
+    }
+    .cad-busca:focus { border-color: var(--blue); }
+    .cad-lista { display: flex; flex-direction: column; gap: 6px; }
+    .cad-item {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; padding: 10px 14px; border-radius: 10px;
+      background: #f5f7fb; border: 1px solid #eef1f6;
+    }
+    .cad-item-nome { font-weight: 600; color: #2a3444; font-size: 0.9rem; word-break: break-word; }
+    .cad-item-del {
+      background: transparent; border: none; cursor: pointer; font-size: 0.95rem;
+      opacity: 0.55; padding: 4px 6px; border-radius: 8px; flex: none;
+      transition: opacity 0.15s, background 0.15s;
+    }
+    .cad-item-del:hover { opacity: 1; background: rgba(214,48,49,0.12); }
+    .cad-vazio { text-align: center; color: #9aa3b2; font-size: 0.85rem; padding: 18px 0; }
 
     .filter-btn {
       padding: 6px 16px;
@@ -917,6 +945,7 @@
       <button class="tab-btn active" onclick="showTab('nova')">➕ Nova</button>
       <button class="tab-btn" onclick="showTab('clientes')">📋 Clientes</button>
       <button class="tab-btn" onclick="showTab('dashboard')">📊 Dashboard</button>
+      <button class="tab-btn" onclick="showTab('cadastro')">👥 Cadastro</button>
     </div>
   </div>
 
@@ -927,6 +956,9 @@
   </div>
 
   <div class="main">
+
+    <!-- Lista compartilhada de clientes cadastrados (autocomplete) -->
+    <datalist id="listaClientes"></datalist>
 
     <!-- ── TAB: NOVA COBRANÇA ── -->
     <div id="tab-nova" class="tab-panel active">
@@ -943,9 +975,9 @@
         <div id="formJuros">
           <div class="form-grid">
             <div class="form-group full">
-              <label for="nome">Nome do Cliente</label>
+              <label for="nome">Nome do Cliente <span style="font-weight:400;color:#aaa">(somente cadastrados)</span></label>
               <div class="input-wrap">
-                <input type="text" id="nome" placeholder="Ex: João Silva" />
+                <input type="text" id="nome" list="listaClientes" placeholder="Selecione ou digite um cliente cadastrado" autocomplete="off" />
               </div>
             </div>
             <div class="form-group">
@@ -992,9 +1024,9 @@
           </div>
           <div class="form-grid">
             <div class="form-group full">
-              <label for="fixoNome">Nome do Cliente</label>
+              <label for="fixoNome">Nome do Cliente <span style="font-weight:400;color:#aaa">(somente cadastrados)</span></label>
               <div class="input-wrap">
-                <input type="text" id="fixoNome" placeholder="Ex: Ana Paula" />
+                <input type="text" id="fixoNome" list="listaClientes" placeholder="Selecione ou digite um cliente cadastrado" autocomplete="off" />
               </div>
             </div>
             <div class="form-group full">
@@ -1087,6 +1119,9 @@
 
     <!-- ── TAB: DASHBOARD ── -->
     <div id="tab-dashboard" class="tab-panel">
+      <div class="dash-header">
+        <button class="btn-olho" id="btnOlhoDash" title="Ocultar/mostrar valores" onclick="toggleValores()">👁️</button>
+      </div>
       <div class="stats-row" id="dashStats"></div>
       <div class="charts-grid">
         <div class="card">
@@ -1102,6 +1137,37 @@
       <div class="card" style="margin-top:16px;">
         <div class="card-title" style="font-size:0.85rem; margin-bottom:12px;">📈 Lucro por Mês</div>
         <canvas id="chartLucro" class="chart-canvas" style="max-height:200px;"></canvas>
+      </div>
+    </div>
+
+    <!-- ── TAB: CADASTRO DE CLIENTES ── -->
+    <div id="tab-cadastro" class="tab-panel">
+      <div class="card">
+        <div class="card-title">Cadastro de Clientes</div>
+        <p style="font-size:0.82rem;color:#666;margin:-4px 0 14px;">
+          Os clientes aqui cadastrados são os únicos que podem ser usados ao criar uma nova cobrança.
+        </p>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="novoClienteNome">Nome do Cliente</label>
+            <div class="input-wrap">
+              <input type="text" id="novoClienteNome" placeholder="Ex: João Silva" autocomplete="off"
+                     onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarClienteCadastro();}" />
+            </div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-blue" onclick="adicionarClienteCadastro()">➕ Cadastrar Cliente</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="cad-list-head">
+          <div class="card-title" style="margin:0;">Clientes Cadastrados (<span id="cadTotal">0</span>)</div>
+          <input type="text" id="cadBuscaInput" class="cad-busca" placeholder="🔍 Buscar..." autocomplete="off"
+                 oninput="renderCadastro()" />
+        </div>
+        <div id="cadLista" class="cad-lista"></div>
       </div>
     </div>
 
@@ -1233,6 +1299,10 @@
 let db              = null;
 let auth            = null;
 let clientesCache   = [];
+let clientesCadastradosCache = [];   // clientes do nó Firebase 'clientesCadastrados'
+let registryCarregado = false;       // já recebeu o 1º snapshot de clientesCadastrados
+let cobrancasCarregadas = false;     // já recebeu o 1º snapshot de clientes
+let seedFeito         = false;       // evita re-importar clientes existentes
 let activeTab       = 'nova';
 let pendingKey      = null;   // chave do Firebase aguardando confirmação
 let pixAtual        = '';     // chave PIX sincronizada via Firebase
@@ -1358,9 +1428,25 @@ function iniciarApp() {
       clientesCache.push({ ...child.val(), fk: child.key });
     });
     clientesCache.sort((a, b) => (b.id || 0) - (a.id || 0));
+    cobrancasCarregadas = true;
     checkAlertas();
     if (activeTab === 'clientes')  renderTabela();
     if (activeTab === 'dashboard') renderDashboard();
+    garantirSeedClientes();
+  });
+
+  // Nó de clientes cadastrados (registro válido para novas cobranças)
+  db.ref('clientesCadastrados').on('value', snapshot => {
+    clientesCadastradosCache = [];
+    snapshot.forEach(child => {
+      clientesCadastradosCache.push({ ...child.val(), fk: child.key });
+    });
+    clientesCadastradosCache.sort((a, b) =>
+      (a.nome || '').localeCompare(b.nome || '', 'pt', { sensitivity: 'base' }));
+    registryCarregado = true;
+    atualizarDatalistClientes();
+    if (activeTab === 'cadastro') renderCadastro();
+    garantirSeedClientes();
   });
 }
 
@@ -1764,7 +1850,7 @@ function diasAteVencer(iso) {
 // ─────────────────────────────
 //  TABS
 // ─────────────────────────────
-const TAB_NAMES = ['nova','clientes','dashboard'];
+const TAB_NAMES = ['nova','clientes','dashboard','cadastro'];
 
 function showTab(tab) {
   TAB_NAMES.forEach((t, i) => {
@@ -1774,6 +1860,7 @@ function showTab(tab) {
   activeTab = tab;
   if (tab === 'clientes')  renderTabela();
   if (tab === 'dashboard') renderDashboard();
+  if (tab === 'cadastro')  renderCadastro();
 }
 
 // ─────────────────────────────
@@ -1820,12 +1907,17 @@ function salvar() {
 
   // ── Modo Valor Fixo ──
   if (modoAtual === 'fixo') {
-    const nome       = document.getElementById('fixoNome').value.trim();
+    const nomeDigitado = document.getElementById('fixoNome').value.trim();
     const valor      = parseFloat(document.getElementById('fixoValor').value);
     const dataSolic  = document.getElementById('fixoDataSolic').value;
     const dataPag    = document.getElementById('fixoDataPag').value;
 
-    if (!nome)             { alert('Informe o nome do cliente.'); return; }
+    if (!nomeDigitado)     { alert('Informe o nome do cliente.'); return; }
+    const nome = resolverNomeCadastrado(nomeDigitado);
+    if (!nome) {
+      alert('⚠️ "' + nomeDigitado + '" não está cadastrado.\n\nCadastre o cliente na aba "👥 Cadastro" antes de criar a cobrança.');
+      return;
+    }
     if (isNaN(valor) || valor <= 0) { alert('Informe o valor.'); return; }
     if (!dataSolic)        { alert('Informe a data de solicitação.'); return; }
     if (!dataPag)          { alert('Informe a data de pagamento.'); return; }
@@ -1856,8 +1948,13 @@ function salvar() {
   }
 
   // ── Modo Com Juros ──
-  const nome = document.getElementById('nome').value.trim();
-  if (!nome)    { alert('Informe o nome do cliente.'); return; }
+  const nomeDigitado = document.getElementById('nome').value.trim();
+  if (!nomeDigitado) { alert('Informe o nome do cliente.'); return; }
+  const nome = resolverNomeCadastrado(nomeDigitado);
+  if (!nome) {
+    alert('⚠️ "' + nomeDigitado + '" não está cadastrado.\n\nCadastre o cliente na aba "👥 Cadastro" antes de criar a cobrança.');
+    return;
+  }
   if (!preview) { alert('Preencha todos os campos.'); return; }
 
   setLoading(true);
@@ -1927,10 +2024,16 @@ function setFiltroStatus(f) {
   renderTabela();
 }
 
+let valoresOcultos = false;
 function toggleValores() {
-  const tab = document.getElementById('tab-clientes');
-  const oculto = tab.classList.toggle('valores-ocultos');
-  document.getElementById('btnOlho').textContent = oculto ? '🙈' : '👁️';
+  valoresOcultos = !valoresOcultos;
+  // Estado global: aplica na aba Clientes e no Dashboard ao mesmo tempo
+  document.querySelector('.main').classList.toggle('valores-ocultos', valoresOcultos);
+  const emoji = valoresOcultos ? '🙈' : '👁️';
+  const b1 = document.getElementById('btnOlho');
+  const b2 = document.getElementById('btnOlhoDash');
+  if (b1) b1.textContent = emoji;
+  if (b2) b2.textContent = emoji;
 }
 
 function setFiltroCliente(nome) {
@@ -1977,6 +2080,94 @@ function atualizarSelectClientes() {
     if (n === atual) opt.selected = true;
     sel.appendChild(opt);
   });
+}
+
+// ─────────────────────────────
+//  CADASTRO DE CLIENTES
+// ─────────────────────────────
+
+// Preenche o <datalist> usado no autocomplete dos campos "Nome do Cliente"
+function atualizarDatalistClientes() {
+  const dl = document.getElementById('listaClientes');
+  if (!dl) return;
+  dl.innerHTML = '';
+  clientesCadastradosCache.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.nome;
+    dl.appendChild(opt);
+  });
+}
+
+// Retorna o nome oficial cadastrado que corresponde ao texto (ignora
+// maiúsc./minúsc. e espaços). Retorna null se não houver cliente cadastrado.
+function resolverNomeCadastrado(texto) {
+  const alvo = (texto || '').trim().toLowerCase();
+  if (!alvo) return null;
+  const achado = clientesCadastradosCache.find(c => (c.nome || '').trim().toLowerCase() === alvo);
+  return achado ? achado.nome : null;
+}
+
+// Importa uma única vez os nomes já existentes nas cobranças, caso o
+// cadastro ainda esteja vazio (migração inicial, sem perder ninguém).
+function garantirSeedClientes() {
+  if (seedFeito || !registryCarregado || !cobrancasCarregadas) return;
+  if (clientesCadastradosCache.length > 0) { seedFeito = true; return; }
+  const nomes = [...new Set(clientesCache.map(c => (c.nome || '').trim()).filter(Boolean))];
+  if (nomes.length === 0) return;   // nada para importar ainda
+  seedFeito = true;
+  nomes.forEach(nome => db.ref('clientesCadastrados').push({ nome, criadoEm: Date.now() }));
+}
+
+function adicionarClienteCadastro() {
+  if (!db) return;
+  const input = document.getElementById('novoClienteNome');
+  const nome  = input.value.trim();
+  if (!nome) { alert('Digite o nome do cliente.'); return; }
+  if (resolverNomeCadastrado(nome)) {
+    alert('Este cliente já está cadastrado.');
+    return;
+  }
+  db.ref('clientesCadastrados').push({ nome, criadoEm: Date.now() })
+    .then(() => { input.value = ''; input.focus(); })
+    .catch(e => alert('Erro ao cadastrar: ' + e.message));
+}
+
+function removerClienteCadastro(fk, nome) {
+  if (!db) return;
+  const usados = clientesCache.filter(c => (c.nome || '').trim().toLowerCase() === (nome || '').trim().toLowerCase()).length;
+  let msg = `Remover "${nome}" do cadastro?`;
+  if (usados > 0) msg += `\n\n⚠️ Existe(m) ${usados} cobrança(s) com este nome. Elas continuarão na lista, mas você não poderá criar novas cobranças para este cliente até cadastrá-lo de novo.`;
+  if (!confirm(msg)) return;
+  db.ref('clientesCadastrados/' + fk).remove()
+    .catch(e => alert('Erro ao remover: ' + e.message));
+}
+
+function renderCadastro() {
+  const lista = document.getElementById('cadLista');
+  if (!lista) return;
+  document.getElementById('cadTotal').textContent = clientesCadastradosCache.length;
+
+  const busca = (document.getElementById('cadBuscaInput').value || '').trim().toLowerCase();
+  const filtrados = busca
+    ? clientesCadastradosCache.filter(c => (c.nome || '').toLowerCase().includes(busca))
+    : clientesCadastradosCache;
+
+  if (filtrados.length === 0) {
+    lista.innerHTML = `<div class="cad-vazio">${
+      clientesCadastradosCache.length === 0
+        ? 'Nenhum cliente cadastrado ainda. Adicione o primeiro acima.'
+        : 'Nenhum cliente encontrado para esta busca.'
+    }</div>`;
+    return;
+  }
+
+  lista.innerHTML = filtrados.map(c => {
+    const nomeEsc = (c.nome || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    return `<div class="cad-item">
+      <span class="cad-item-nome">${c.nome}</span>
+      <button class="cad-item-del" title="Remover" onclick="removerClienteCadastro('${c.fk}','${nomeEsc}')">🗑</button>
+    </div>`;
+  }).join('');
 }
 
 // ─────────────────────────────
@@ -2551,17 +2742,21 @@ function renderDashboard() {
 // ─────────────────────────────
 function gerarReciboForm() {
   if (modoAtual === 'fixo') {
-    const nome      = document.getElementById('fixoNome').value.trim();
+    const nomeDigitado = document.getElementById('fixoNome').value.trim();
     const valor     = parseFloat(document.getElementById('fixoValor').value);
     const dataSolic = document.getElementById('fixoDataSolic').value;
     const dataPag   = document.getElementById('fixoDataPag').value;
-    if (!nome)                      { alert('Informe o nome do cliente.'); return; }
+    if (!nomeDigitado)              { alert('Informe o nome do cliente.'); return; }
+    const nome = resolverNomeCadastrado(nomeDigitado);
+    if (!nome) { alert('⚠️ "' + nomeDigitado + '" não está cadastrado.\n\nCadastre o cliente na aba "👥 Cadastro" antes de gerar o recibo.'); return; }
     if (isNaN(valor) || valor <= 0) { alert('Informe o valor.'); return; }
     if (!dataSolic || !dataPag)     { alert('Informe as datas.'); return; }
     desenharRecibo({ nome, dataSolic: isoParaBR(dataSolic), valorA: 0, valorFinal: valor, dataPag: isoParaBR(dataPag) });
   } else {
-    const nome = document.getElementById('nome').value.trim();
-    if (!nome)    { alert('Informe o nome do cliente.'); return; }
+    const nomeDigitado = document.getElementById('nome').value.trim();
+    if (!nomeDigitado) { alert('Informe o nome do cliente.'); return; }
+    const nome = resolverNomeCadastrado(nomeDigitado);
+    if (!nome) { alert('⚠️ "' + nomeDigitado + '" não está cadastrado.\n\nCadastre o cliente na aba "👥 Cadastro" antes de gerar o recibo.'); return; }
     if (!preview) { alert('Preencha todos os campos primeiro.'); return; }
     desenharRecibo({ nome, dataSolic: preview.dataSolic, valorA: preview.valorA, valorFinal: preview.valorFinal, dataPag: preview.dataPag });
   }
