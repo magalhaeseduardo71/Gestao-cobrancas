@@ -702,6 +702,8 @@
     .bs-msg:hover  { background: #dcfce7; }
     .bs-msg2 { background: #fffbea; color: #b45309; border: 1px solid #fde68a; }
     .bs-msg2:hover { background: #fef9c3; }
+    .bs-msg3 { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; font-weight: 700; }
+    .bs-msg3:hover { background: #fee2e2; }
     .bs-renovar { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
     .bs-renovar:hover { background: #bae6fd; }
     .bs-edit { background: #f0f4ff; color: #4338ca; border: 1px solid #c7d2fe; }
@@ -1847,6 +1849,24 @@ function diasAteVencer(iso) {
   return Math.round((alvo - hoje) / 86400000);
 }
 
+// Juros de atraso: 5% ao dia, compostos, SEM limite de dias.
+// 1 dia = valor x 1,05 | 2 dias = valor x 1,05² | 50 dias = valor x 1,05⁵⁰ ...
+// Continua acumulando enquanto a cobrança não for quitada.
+const JUROS_DIA = 0.05;
+
+function calcAtraso(c) {
+  const dias = Math.max(0, -diasAteVencer(c.dataPagISO));
+  const base = Number(c.valorFinal) || 0;
+  const valorAtualizado = dias > 0 ? base * Math.pow(1 + JUROS_DIA, dias) : base;
+  return {
+    dias,
+    base,
+    valorAtualizado,
+    juros:   valorAtualizado - base,
+    percent: base > 0 ? ((valorAtualizado / base) - 1) * 100 : 0
+  };
+}
+
 // ─────────────────────────────
 //  TABS
 // ─────────────────────────────
@@ -2264,7 +2284,10 @@ function renderTabela() {
     const d = diasAteVencer(c.dataPagISO);
     let badge;
     if      (c.status === 'pago') badge = '<span class="badge badge-pago">✓ Pago</span>';
-    else if (d < 0)               badge = `<button class="badge badge-atrasado" onclick="copiarMsgAtrasado('${c.fk}')" title="Copiar mensagem de cobrança atrasada">⚠ Atrasado</button>`;
+    else if (d < 0) {
+      const at = calcAtraso(c);
+      badge = `<button class="badge badge-atrasado" onclick="copiarMsgAtrasado('${c.fk}')" title="Atraso de ${at.dias} dia(s) — valor atualizado ${fmt(at.valorAtualizado)}. Clique para copiar a cobrança.">⚠ Atrasado ${at.dias}d</button>`;
+    }
     else if (d === 0)             badge = '<span class="badge badge-vencendo">🔴 Vence Hoje</span>';
     else if (d <= 3)              badge = `<span class="badge badge-vencendo">⏰ ${d}d</span>`;
     else                          badge = '<span class="badge badge-aberto">Em Aberto</span>';
@@ -2290,6 +2313,11 @@ function renderTabela() {
     if (c.status !== 'pago') {
       if (d === 1)  btnMsg = `<button class="btn-sm bs-msg"  title="Copiar aviso de amanhã" onclick="copiarMsg('${c.fk}','amanha')">📋 Amanhã</button>`;
       if (d === 0)  btnMsg = `<button class="btn-sm bs-msg2" title="Copiar aviso de hoje"    onclick="copiarMsg('${c.fk}','hoje')">📋 Hoje</button>`;
+      // Atraso: botão sempre disponível enquanto não estiver quitado, sem limite de dias
+      if (d < 0) {
+        const at = calcAtraso(c);
+        btnMsg = `<button class="btn-sm bs-msg3" title="Atraso de ${at.dias} dia(s) — copiar cobrança com valor atualizado de ${fmt(at.valorAtualizado)}" onclick="copiarMsgAtrasado('${c.fk}')">📋 Cobrar ${at.dias}d</button>`;
+      }
     }
 
     return `<tr${trClass}>
@@ -2591,7 +2619,11 @@ function checkAlertas() {
     if      (d === 0)        itens.push({ d, texto: `${nome} vence HOJE`,                                    urgente: true,  atrasado: false });
     else if (d === 1)        itens.push({ d, texto: `${nome} vence amanhã`,                                  urgente: false, atrasado: false });
     else if (d > 1 && d <= 3) itens.push({ d, texto: `${nome} vence em ${d} dias`,                          urgente: false, atrasado: false });
-    else if (d < 0)          itens.push({ d, texto: `${nome} está atrasado há ${Math.abs(d)} dia${Math.abs(d)!==1?'s':''}`, urgente: false, atrasado: true });
+    else if (d < 0) {
+      // Sem limite de dias: permanece no alerta enquanto não for quitado
+      const at = calcAtraso(c);
+      itens.push({ d, texto: `${nome} está atrasado há ${at.dias} dia${at.dias!==1?'s':''} — ${fmt(at.valorAtualizado)}`, urgente: false, atrasado: true });
+    }
   });
 
   const banner = document.getElementById('alertBanner');
@@ -2934,25 +2966,45 @@ function toggleSenha(inputId, btn) {
   }
 }
 
+function saudacao() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Bom dia';
+  if (h < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
+
+function saudacaoEmoji() {
+  const h = new Date().getHours();
+  if (h < 12) return '☀️';
+  if (h < 18) return '🌤';
+  return '🌙';
+}
+
 function copiarMsgAtrasado(fk) {
   const c = clientesCache.find(c => c.fk === fk);
   if (!c) return;
-  const diasAtraso    = Math.abs(diasAteVencer(c.dataPagISO));
-  const valorAtualiz  = c.valorFinal * Math.pow(1.05, diasAtraso);
+
+  // Sem limite de dias: a cobrança é gerada enquanto o registro não estiver quitado
+  const at            = calcAtraso(c);
+  const diasAtraso    = at.dias;
   const pix           = getPix();
   const nomePrimeiro  = c.nome.split(' ')[0];
   const pixLinha      = pix ? `\n\n🔑 *Chave PIX:* ${pix}` : '';
+  const plural        = diasAtraso !== 1 ? 's' : '';
 
   const msg =
-`Bom dia, *${nomePrimeiro}*! ☀️
+`${saudacao()}, *${nomePrimeiro}*! ${saudacaoEmoji()}
 
-Estou entrando em contato pois seu pagamento está em *atraso há ${diasAtraso} dia${diasAtraso !== 1 ? 's' : ''}*.
+Estou entrando em contato pois seu pagamento venceu em *${c.dataPag}* e está em *atraso há ${diasAtraso} dia${plural}*.
 
-O valor atualizado com os juros de atraso é de *${fmt(valorAtualiz)}*.
+📄 *Valor original:* ${fmt(at.base)}
+⏱ *Atraso:* ${diasAtraso} dia${plural}
+📈 *Juros (5% ao dia):* ${fmt(at.juros)}
+💰 *Total atualizado hoje:* *${fmt(at.valorAtualizado)}*
 
-Por favor, regularize o quanto antes para evitar acréscimos adicionais.${pixLinha}
+Lembrando que o valor continua sendo corrigido em 5% a cada dia de atraso até a quitação.${pixLinha}
 
-Aguardo seu retorno! 🙏`;
+Por favor, regularize o quanto antes. Aguardo seu retorno! 🙏`;
 
   navigator.clipboard.writeText(msg)
     .then(() => mostrarToast('⚠️ Mensagem de atraso copiada! Cole no WhatsApp.'))
@@ -2978,14 +3030,14 @@ function copiarMsg(fk, tipo) {
   let msg = '';
   if (tipo === 'amanha') {
     msg =
-`Bom dia, *${nomePrimeiro}*! 😊
+`${saudacao()}, *${nomePrimeiro}*! 😊
 
 Passando para lembrar que amanhã, *dia ${dataPag}*, temos um vencimento no valor de *${valor}*.${pixLinha}
 
 Qualquer dúvida, estou à disposição. Obrigado! 🙏`;
   } else {
     msg =
-`Bom dia, *${nomePrimeiro}*! 😊
+`${saudacao()}, *${nomePrimeiro}*! 😊
 
 Passando para lembrar que *hoje, dia ${dataPag}*, temos um vencimento no valor de *${valor}*.${pixLinha}
 
