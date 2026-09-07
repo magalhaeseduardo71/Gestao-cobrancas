@@ -378,6 +378,9 @@
     /* Oculta valores em R$ quando ativado */
     .valores-ocultos #statsRow .stat-value,
     .valores-ocultos #resumoCliente .ri-valor,
+    .valores-ocultos #painelVencimento .pv-valor,
+    .valores-ocultos #painelVencimento .venc-chip b,
+    .valores-ocultos #painelVencimento .pv-alerta strong,
     .valores-ocultos .td-money,
     .valores-ocultos #dashStats .stat-value,
     .valores-ocultos #tab-dashboard .chart-canvas {
@@ -553,6 +556,134 @@
     .ri-azul  { color: var(--blue); }
     .ri-verde { color: var(--green); }
     .ri-cinza { color: var(--text-dark); }
+
+    /* ══ FILTRO POR VENCIMENTO (PRÓXIMOS X DIAS) ══ */
+    .venc-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .venc-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .venc-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--gray-border);
+      background: var(--white);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .venc-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .venc-btn.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(58,123,213,0.28);
+    }
+
+    .venc-custom { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--text-light); }
+    .venc-custom input {
+      width: 70px;
+      padding: 6px 10px;
+      border: 1px solid var(--gray-border);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      text-align: center;
+      outline: none;
+      background: var(--white);
+      color: var(--text-dark);
+      transition: border-color 0.2s;
+    }
+    .venc-custom input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(58,123,213,0.11); }
+
+    /* ══ PAINEL "A RECEBER NO PERÍODO" ══ */
+    .painel-venc {
+      margin-bottom: 14px;
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 16px 20px;
+      border-left: 4px solid var(--green);
+    }
+
+    .pv-titulo {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .pv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .pv-item { background: var(--gray-light); border-radius: 8px; padding: 12px 14px; text-align: center; }
+    .pv-item.pv-destaque { background: linear-gradient(135deg, #e9f7ef, #d7f0e1); }
+    .pv-label { font-size: 0.72rem; color: var(--text-light); margin-bottom: 4px; }
+    .pv-valor { font-size: 1.05rem; font-weight: 800; }
+    .pv-verde { color: var(--green); }
+    .pv-azul  { color: var(--blue); }
+    .pv-cinza { color: var(--text-dark); }
+
+    .pv-sub { margin-top: 14px; font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.4px; }
+    .pv-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .venc-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--gray-light);
+      border: 1px solid var(--gray-border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.74rem;
+      color: var(--text-mid);
+    }
+    .venc-chip b { font-weight: 700; color: var(--text-dark); }
+    .venc-chip i { font-style: normal; font-weight: 600; }
+    .venc-chip.chip-hoje   { background: #fff4e0; border-color: #f0c268; color: #a86800; }
+    .venc-chip.chip-hoje b { color: #a86800; }
+    .venc-chip.chip-atraso   { background: #fdecec; border-color: #f3b6b6; color: var(--red); }
+    .venc-chip.chip-atraso b { color: var(--red); }
+
+    .pv-alerta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #fdecec;
+      border: 1px solid #f3b6b6;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--red);
+    }
+    .pv-alerta button {
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--red);
+      background: var(--white);
+      color: var(--red);
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .pv-alerta button:hover { background: var(--red); color: #fff; }
+    .pv-nota { margin-top: 10px; font-size: 0.72rem; color: var(--text-light); line-height: 1.5; }
 
     /* ══ TABELA ══ */
     .table-wrap {
@@ -1091,6 +1222,24 @@
         <button class="btn-limpar-filtro" id="btnLimparCliente" onclick="limparFiltroCliente()">✕ Limpar</button>
         <button class="btn btn-gray" style="padding:6px 14px;font-size:0.78rem;border-radius:20px;flex:none;min-width:auto" onclick="exportarCSV()">⬇️ Exportar CSV</button>
       </div>
+
+      <!-- Filtro por janela de vencimento (a receber nos próximos X dias) -->
+      <div class="venc-row">
+        <span class="venc-label">📅 A receber em:</span>
+        <button class="venc-btn" data-dias="7"  onclick="setFiltroDias(7)">7 dias</button>
+        <button class="venc-btn" data-dias="15" onclick="setFiltroDias(15)">15 dias</button>
+        <button class="venc-btn" data-dias="30" onclick="setFiltroDias(30)">30 dias</button>
+        <button class="venc-btn" data-dias="60" onclick="setFiltroDias(60)">60 dias</button>
+        <div class="venc-custom">
+          <input type="number" id="vencDiasInput" min="0" max="3650" step="1" placeholder="Nº"
+                 oninput="setFiltroDiasCustom(this.value)" autocomplete="off" />
+          <span>dias</span>
+        </div>
+        <button class="btn-limpar-filtro" id="btnLimparVenc" onclick="limparFiltroDias()">✕ Limpar prazo</button>
+      </div>
+
+      <!-- Painel de totais do período selecionado -->
+      <div id="painelVencimento" style="display:none"></div>
 
       <!-- Resumo do cliente filtrado (aparece acima da tabela) -->
       <div id="resumoCliente" style="display:none"></div>
@@ -2021,6 +2170,8 @@ function limpar() {
 let filtroAtual   = 'todos';
 let filtroCliente = '';
 let buscaCliente  = '';
+let filtroDias      = null;   // null = sem janela de vencimento; número = próximos N dias
+let incluirAtrasados = false; // inclui vencidos no total do período
 let modoAtual     = 'juros'; // 'juros' ou 'fixo'
 
 function setModo(modo) {
@@ -2037,6 +2188,13 @@ function setFiltro(f, btn) {
 
 function setFiltroStatus(f) {
   filtroAtual = f;
+  // A janela de vencimento só faz sentido para cobranças em aberto
+  if (f === 'pago' && filtroDias !== null) {
+    filtroDias = null;
+    const inp = document.getElementById('vencDiasInput');
+    if (inp) inp.value = '';
+    sincronizarBotoesDias();
+  }
   // Atualiza apenas os botões do filter-row principal (por data-filtro)
   document.querySelectorAll('.filter-row .filter-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.filtro === f);
@@ -2087,6 +2245,67 @@ function limparBusca() {
   document.getElementById('buscaInput').value = '';
   document.getElementById('btnLimparBusca').style.display = 'none';
   renderTabela();
+}
+
+// ─────────────────────────────
+//  FILTRO POR VENCIMENTO (próximos X dias)
+// ─────────────────────────────
+function sincronizarBotoesDias() {
+  document.querySelectorAll('.venc-row .venc-btn').forEach(b => {
+    b.classList.toggle('active', filtroDias !== null && Number(b.dataset.dias) === filtroDias);
+  });
+  const btnLimpar = document.getElementById('btnLimparVenc');
+  if (btnLimpar) btnLimpar.style.display = filtroDias !== null ? 'inline-block' : 'none';
+}
+
+function setFiltroDias(n) {
+  // Clicar no botão já ativo desliga o filtro
+  filtroDias = (filtroDias === n) ? null : n;
+  const inp = document.getElementById('vencDiasInput');
+  if (inp) inp.value = '';
+  if (filtroDias !== null && filtroAtual === 'pago') setFiltroStatus('aberto');
+  sincronizarBotoesDias();
+  renderTabela();
+}
+
+function setFiltroDiasCustom(val) {
+  const n = parseInt(val, 10);
+  filtroDias = (val === '' || isNaN(n) || n < 0) ? null : n;
+  if (filtroDias !== null && filtroAtual === 'pago') setFiltroStatus('aberto');
+  sincronizarBotoesDias();
+  renderTabela();
+}
+
+function limparFiltroDias() {
+  filtroDias = null;
+  incluirAtrasados = false;
+  const inp = document.getElementById('vencDiasInput');
+  if (inp) inp.value = '';
+  sincronizarBotoesDias();
+  renderTabela();
+}
+
+function toggleIncluirAtrasados() {
+  incluirAtrasados = !incluirAtrasados;
+  renderTabela();
+}
+
+// "Vitor Inacio" -> "Vitor I" | "Ana Paula" -> "Ana P" | "Pedro" -> "Pedro"
+function nomeCurto(nome) {
+  const partes = String(nome || '').trim().split(/\s+/).filter(Boolean);
+  if (!partes.length) return '';
+  if (partes.length === 1) return partes[0];
+  return partes[0] + ' ' + partes[partes.length - 1].charAt(0).toUpperCase();
+}
+
+// Valor realmente a receber: vencido entra com os juros de atraso acumulados
+function valorAReceber(c) {
+  return diasAteVencer(c.dataPagISO) < 0 ? calcAtraso(c).valorAtualizado : (Number(c.valorFinal) || 0);
+}
+
+function lucroAReceber(c) {
+  const base = Number(c.lucro) || 0;
+  return diasAteVencer(c.dataPagISO) < 0 ? base + calcAtraso(c).juros : base;
 }
 
 function atualizarSelectClientes() {
@@ -2191,6 +2410,94 @@ function renderCadastro() {
 }
 
 // ─────────────────────────────
+//  PAINEL "A RECEBER NOS PRÓXIMOS X DIAS"
+// ─────────────────────────────
+function renderPainelVencimento(todos, lista) {
+  const el = document.getElementById('painelVencimento');
+  if (!el) return;
+
+  if (filtroDias === null) {
+    el.style.display = 'none';
+    el.innerHTML = '';
+    return;
+  }
+
+  // Totais do período (a lista já vem com cliente/busca/janela aplicados)
+  const totReceber = lista.reduce((s, c) => s + valorAReceber(c), 0);
+  const totLucro   = lista.reduce((s, c) => s + lucroAReceber(c), 0);
+  const qtdClientes = new Set(lista.map(c => c.nome)).size;
+
+  // Vencidos que ficaram de fora da janela (mesmos filtros de nome)
+  let base = todos.filter(c => c.status !== 'pago');
+  if (filtroCliente) base = base.filter(c => c.nome === filtroCliente);
+  if (buscaCliente)  base = base.filter(c => c.nome.toLowerCase().includes(buscaCliente));
+  const atrasados    = base.filter(c => diasAteVencer(c.dataPagISO) < 0);
+  const totAtrasado  = atrasados.reduce((s, c) => s + valorAReceber(c), 0);
+
+  // Período coberto
+  const periodo = isoParaBR(hojeISO()) + ' a ' + isoParaBR(somarDias(hojeISO(), filtroDias));
+  const alvoNome = filtroCliente || buscaCliente;
+
+  // Quebra por data de vencimento
+  const porDia = {};
+  lista.forEach(c => {
+    if (!porDia[c.dataPagISO]) porDia[c.dataPagISO] = { total: 0, nomes: [], label: c.dataPag };
+    porDia[c.dataPagISO].total += valorAReceber(c);
+    porDia[c.dataPagISO].nomes.push(nomeCurto(c.nome));
+  });
+  const chips = Object.keys(porDia).sort().map(iso => {
+    const d = diasAteVencer(iso);
+    const cls = d < 0 ? ' chip-atraso' : d === 0 ? ' chip-hoje' : '';
+    const pre = d < 0 ? '⚠ ' : d === 0 ? '🔴 ' : '';
+    const g = porDia[iso];
+    // Nomes repetidos no mesmo dia viram "Ana P (2)"; acima de 3 nomes resume com "+N"
+    const unicos = [];
+    g.nomes.forEach(n => {
+      const j = unicos.find(u => u.nome === n);
+      if (j) j.qtd++; else unicos.push({ nome: n, qtd: 1 });
+    });
+    const rotulos = unicos.map(u => u.qtd > 1 ? `${u.nome} (${u.qtd})` : u.nome);
+    const nomes = rotulos.length <= 3
+      ? rotulos.join(', ')
+      : rotulos.slice(0, 3).join(', ') + ' +' + (rotulos.length - 3);
+    return `<span class="venc-chip${cls}">${pre}${g.label} • <i>${nomes}</i> • <b>${fmt(g.total)}</b></span>`;
+  }).join('');
+
+  const rotuloPrazo = filtroDias === 0 ? 'que vencem hoje' : `nos próximos ${filtroDias} dia${filtroDias !== 1 ? 's' : ''}`;
+
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div class="painel-venc">
+      <div class="pv-titulo">💰 A receber ${rotuloPrazo}${alvoNome ? ' — ' + alvoNome : ''} <span style="font-weight:600; text-transform:none; letter-spacing:0; color:var(--text-light)">(${periodo})</span></div>
+      <div class="pv-grid">
+        <div class="pv-item pv-destaque">
+          <div class="pv-label">Total a Receber</div>
+          <div class="pv-valor pv-verde">${fmt(totReceber)}</div>
+        </div>
+        <div class="pv-item">
+          <div class="pv-label">Lucro Previsto</div>
+          <div class="pv-valor pv-azul">${fmt(totLucro)}</div>
+        </div>
+        <div class="pv-item">
+          <div class="pv-label">Cobranças</div>
+          <div class="pv-valor pv-cinza">${lista.length}</div>
+        </div>
+        <div class="pv-item">
+          <div class="pv-label">Clientes</div>
+          <div class="pv-valor pv-cinza">${qtdClientes}</div>
+        </div>
+      </div>
+      ${chips ? `<div class="pv-sub">Por data de vencimento</div><div class="pv-chips">${chips}</div>` : ''}
+      ${atrasados.length ? `
+        <div class="pv-alerta">
+          <span>⚠️ ${atrasados.length} cobrança${atrasados.length !== 1 ? 's' : ''} atrasada${atrasados.length !== 1 ? 's' : ''} — <strong>${fmt(totAtrasado)}</strong> ${incluirAtrasados ? '(já somado acima)' : '(fora do total acima)'}</span>
+          <button onclick="toggleIncluirAtrasados()">${incluirAtrasados ? '− Tirar do total' : '+ Somar ao total'}</button>
+        </div>` : ''}
+      ${incluirAtrasados && atrasados.length ? `<div class="pv-nota">Cobranças vencidas entram com os juros de atraso acumulados (${(JUROS_DIA*100).toFixed(0)}% ao dia, compostos).</div>` : ''}
+    </div>`;
+}
+
+// ─────────────────────────────
 //  TABELA
 // ─────────────────────────────
 function renderTabela() {
@@ -2213,6 +2520,17 @@ function renderTabela() {
   let lista = filtroAtual === 'todos' ? todos : todos.filter(c => c.status === filtroAtual);
   if (filtroCliente) lista = lista.filter(c => c.nome === filtroCliente);
   if (buscaCliente)  lista = lista.filter(c => c.nome.toLowerCase().includes(buscaCliente));
+
+  // ── Janela de vencimento: só pendentes que vencem de hoje até hoje + N dias ──
+  if (filtroDias !== null) {
+    lista = lista.filter(c => {
+      if (c.status === 'pago') return false;
+      const d = diasAteVencer(c.dataPagISO);
+      return d < 0 ? incluirAtrasados : d <= filtroDias;
+    });
+  }
+
+  renderPainelVencimento(todos, lista);
 
   // Ordenação: abertos mais próximos do vencimento primeiro, pagos no final
   lista = [...lista].sort((a, b) => {
@@ -2622,7 +2940,7 @@ function checkAlertas() {
     else if (d < 0) {
       // Sem limite de dias: permanece no alerta enquanto não for quitado
       const at = calcAtraso(c);
-      itens.push({ d, texto: `${nome} está atrasado há ${at.dias} dia${at.dias!==1?'s':''} — ${fmt(at.valorAtualizado)}`, urgente: false, atrasado: true });
+      itens.push({ d, texto: `${nome} está atrasado há ${at.dias} dia${at.dias!==1?'s':''}`, urgente: false, atrasado: true });
     }
   });
 
