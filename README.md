@@ -110,7 +110,25 @@ Esta pasta é um repositório git. A versão original (antes das melhorias de
 segurança) está salva no primeiro commit, então nada se perde.
 
 - `remote origin` → github.com/magalhaeseduardo71/Gestao-cobrancas
-- Branch local **`master`** → branch remota **`main`** (é a que o GitHub Pages
-  serve). O `git push` já vai para o lugar certo, sem precisar de argumentos.
+- Branch local **`main`** → branch remota **`main`** (é a que o GitHub Pages
+  serve). Mesmo nome dos dois lados, então `git push` e `git pull` funcionam
+  sozinhos, sem argumentos.
 - `.claude/settings.local.json` fica no `.gitignore` — config local, não é
   publicada.
+
+### Se aparecer erro de branch no push
+
+Até setembro/2026 o branch local se chamava `master` e o remoto `main`. Com
+nomes diferentes, o `git push` sozinho falhava com *"The upstream branch of your
+current branch does not match the name of your current branch"* e era preciso
+digitar `git push origin master:main`. Isso foi resolvido renomeando o branch
+local para `main`.
+
+Se um dia o erro voltar (por exemplo numa cópia antiga do repositório em outro
+PC), confira em que branch você está e conserte com:
+
+```bash
+git branch --show-current          # se responder "master", é esse o caso
+git branch -m master main          # renomeia o branch local
+git branch -u origin/main main     # aponta para o branch remoto certo
+```
