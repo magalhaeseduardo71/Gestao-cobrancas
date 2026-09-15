@@ -426,6 +426,20 @@
       transition: all 0.2s;
     }
 
+    .btn-extrato {
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--blue);
+      background: var(--blue);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(58,123,213,0.35);
+    }
+    .btn-extrato:hover { filter: brightness(1.08); }
+
     .filter-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
     .filter-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); box-shadow: 0 2px 8px rgba(58,123,213,0.35); }
 
@@ -2170,6 +2184,7 @@ function limpar() {
 let filtroAtual   = 'todos';
 let filtroCliente = '';
 let buscaCliente  = '';
+let listaFiltradaCache = [];   // lista exibida na tabela (base do extrato)
 let filtroDias      = null;   // null = sem janela de vencimento; número = próximos N dias
 let incluirAtrasados = false; // inclui vencidos no total do período
 let modoAtual     = 'juros'; // 'juros' ou 'fixo'
@@ -2540,6 +2555,7 @@ function renderTabela() {
     // ambos abertos: ordena por data de pagamento crescente (mais próximo primeiro)
     return a.dataPagISO < b.dataPagISO ? -1 : a.dataPagISO > b.dataPagISO ? 1 : 0;
   });
+  listaFiltradaCache = lista;
   const tbody = document.getElementById('tabelaBody');
 
   // ── Resumo do cliente filtrado ──
@@ -2571,6 +2587,7 @@ function renderTabela() {
             <button class="filter-btn${filtroAtual === 'todos'  ? ' active' : ''}" onclick="setFiltroStatus('todos')"  style="padding:4px 10px; font-size:0.75rem;">Todos (${qtdTotal})</button>
             <button class="filter-btn${filtroAtual === 'aberto' ? ' active' : ''}" onclick="setFiltroStatus('aberto')" style="padding:4px 10px; font-size:0.75rem; color:${qtdAberto>0?'#d97706':'inherit'}">Em Aberto (${qtdAberto})</button>
             <button class="filter-btn${filtroAtual === 'pago'   ? ' active' : ''}" onclick="setFiltroStatus('pago')"   style="padding:4px 10px; font-size:0.75rem; color:${qtdPago>0?'#2a9d4e':'inherit'}">Pagos (${qtdPago})</button>
+            <button class="btn-extrato" onclick="gerarExtratoCliente()" title="Baixar extrato em imagem com as cobranças listadas acima">📄 Extrato</button>
           </div>
         </div>
         <div class="resumo-grid">
@@ -3198,6 +3215,123 @@ function desenharRecibo(d) {
       const url = URL.createObjectURL(blob);
       const a   = document.createElement('a');
       a.download = 'recibo-' + d.nome.toLowerCase().replace(/\s+/g, '-') + '.png';
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+    document.body.removeChild(wrapper);
+  });
+}
+
+// ─────────────────────────────
+//  EXTRATO DO CLIENTE (HTML → PNG)
+// ─────────────────────────────
+function gerarExtratoCliente() {
+  const lista = listaFiltradaCache;
+  if (!lista || lista.length === 0) {
+    alert('Nenhuma cobrança na lista atual para gerar o extrato.');
+    return;
+  }
+
+  const nomes = [...new Set(lista.map(c => c.nome))];
+  if (nomes.length > 1) {
+    alert('⚠️ A lista atual está mostrando ' + nomes.length + ' clientes diferentes.\n\nSelecione um cliente em "👤 Filtrar por cliente..." (ou clique no nome dele na tabela) para gerar o extrato.');
+    return;
+  }
+
+  desenharExtrato(nomes[0], lista);
+}
+
+// Rótulo/cores de status usados nas linhas do extrato
+function statusExtrato(c) {
+  if (c.status === 'pago') return { txt: '✓ Pago',     cor: '#1e7e3c', bg: '#e7f6ec' };
+  const d = diasAteVencer(c.dataPagISO);
+  if (d < 0)               return { txt: 'Atrasado ' + (-d) + 'd', cor: '#c0392b', bg: '#fdecea' };
+  if (d === 0)             return { txt: 'Vence Hoje', cor: '#b45309', bg: '#fef3e2' };
+  return { txt: 'Em Aberto', cor: '#e05c5c', bg: '#fdf0f0' };
+}
+
+function desenharExtrato(nome, listaOrig) {
+  // Ordena por data de vencimento (mais antigo primeiro)
+  const lista = [...listaOrig].sort((a, b) =>
+    a.dataPagISO < b.dataPagISO ? -1 : a.dataPagISO > b.dataPagISO ? 1 : 0);
+
+  // As linhas mostram tudo que está filtrado, mas o total soma só o que está em aberto
+  const pendentes = lista.filter(c => c.status !== 'pago');
+  const total = pendentes.reduce((s, c) => s + (Number(c.valorFinal) || 0), 0);
+
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const thStyle = 'padding:12px 10px;text-align:center;font-size:13px;font-weight:700;color:#1e5ba8;text-transform:uppercase;letter-spacing:0.4px;border-bottom:2px solid #d7e3f2;';
+  const tdStyle = 'padding:13px 10px;text-align:center;font-size:14px;color:#1a1a1a;border-bottom:1px solid #eef2f7;';
+
+  const linhas = lista.map((c, i) => {
+    const st = statusExtrato(c);
+    const bgLinha = i % 2 === 1 ? 'background:#fafbfd;' : '';
+    return `
+      <tr style="${bgLinha}">
+        <td style="${tdStyle}">${c.dataSolic}</td>
+        <td style="${tdStyle}font-weight:600;">${fmt(c.valorFinal)}</td>
+        <td style="${tdStyle}">${c.dataPag}</td>
+        <td style="${tdStyle}">
+          <span style="display:inline-block;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;color:${st.cor};background:${st.bg};">${st.txt}</span>
+        </td>
+      </tr>`;
+  }).join('');
+
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-1;';
+  wrapper.innerHTML = `
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;width:700px;background:white;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1);overflow:hidden;">
+      <div style="background:linear-gradient(135deg,#1e5ba8 0%,#2874d4 100%);padding:26px 25px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;text-align:center;">
+        <div style="position:absolute;top:-50%;right:-10%;width:300px;height:300px;background:rgba(255,255,255,0.1);border-radius:50%;"></div>
+        <div style="width:50px;height:50px;background:rgba(255,255,255,0.2);border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;position:relative;z-index:1;">📄</div>
+        <div style="position:relative;z-index:1;text-align:center;width:100%;">
+          <div style="color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;">Extrato de Pendências</div>
+          <div style="color:white;font-size:26px;font-weight:700;letter-spacing:0.5px;line-height:1.25;margin-top:2px;">${esc(nome)}</div>
+        </div>
+      </div>
+
+      <div style="padding:22px 25px 10px;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="${thStyle}">Data Solicitação</th>
+              <th style="${thStyle}">Valor</th>
+              <th style="${thStyle}">Data Pagamento</th>
+              <th style="${thStyle}">Status</th>
+            </tr>
+          </thead>
+          <tbody>${linhas}</tbody>
+        </table>
+
+        <div style="margin-top:18px;background:#f4f8fd;border:1px solid #d7e3f2;border-radius:14px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="color:#666;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Valor Total em Aberto</div>
+            <div style="color:#8a94a6;font-size:12px;margin-top:2px;">${pendentes.length ? pendentes.length + ' pendência' + (pendentes.length !== 1 ? 's' : '') : 'Nenhuma pendência em aberto'}</div>
+          </div>
+          <div style="color:${pendentes.length ? '#1e7e3c' : '#8a94a6'};font-size:26px;font-weight:800;">${fmt(total)}</div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,#1e5ba8 0%,#2874d4 100%);padding:18px 25px;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden;">
+        <div style="position:absolute;bottom:-50%;left:-10%;width:300px;height:300px;background:rgba(255,255,255,0.1);border-radius:50%;"></div>
+        <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;z-index:1;">ℹ️</div>
+        <div style="color:white;font-size:15px;font-weight:700;letter-spacing:0.5px;position:relative;z-index:1;">Atraso sujeito a acréscimo de 5% ao dia.</div>
+      </div>
+    </div>`;
+
+  document.body.appendChild(wrapper);
+
+  html2canvas(wrapper.firstElementChild, {
+    scale: 2, useCORS: true, backgroundColor: null, logging: false
+  }).then(canvas => {
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.download = 'extrato-' + nome.toLowerCase().replace(/\s+/g, '-') + '.png';
       a.href = url;
       document.body.appendChild(a);
       a.click();

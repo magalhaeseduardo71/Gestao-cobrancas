@@ -14,7 +14,7 @@ celular e no PC como uma página web única (PWA).
 - HTML/CSS/JS tudo dentro de um único `index.html` (sem build, sem instalação).
 - **Firebase Realtime Database** — guarda os clientes e as configurações.
 - **Firebase Authentication (e-mail/senha)** — protege o acesso aos dados.
-- Chart.js (dashboard) e html2canvas (gerar recibos), carregados por CDN.
+- Chart.js (dashboard) e html2canvas (gerar recibos e extratos), carregados por CDN.
 
 ## Firebase (projeto `magalhaes-70905`)
 
@@ -81,13 +81,58 @@ A mensagem de atraso é detalhada: mostra a data do vencimento, os dias de atras
 o valor original, os juros acumulados, o total atualizado do dia e a chave PIX.
 A saudação (Bom dia / Boa tarde / Boa noite) acompanha o horário do envio.
 
+## Extrato do cliente (📄 Extrato)
+
+Serve para lembrar um cliente de **vários vencimentos de uma vez**, em vez de
+mandar um recibo por cobrança.
+
+Como usar, na aba **👥 Clientes**:
+
+1. Filtre por um cliente — pelo seletor *👤 Filtrar por cliente...*, pela busca,
+   ou clicando no nome dele na tabela.
+2. O bloco de resumo aparece acima da tabela e, nele, o botão **📄 Extrato**
+   (ele **só existe quando há filtro por nome** — sem cliente selecionado, some).
+3. Clique e o extrato baixa como PNG (`extrato-nome-do-cliente.png`), do mesmo
+   jeito que o recibo.
+
+O extrato leva **exatamente as cobranças que estão na tabela naquele momento** —
+os filtros de status e de prazo (*📅 A receber em*) valem todos.
+
+O **Valor Total em Aberto**, porém, soma sempre **só o que não foi pago**, mesmo
+quando a lista mostra pagos junto. Ou seja: sem filtro de status, um cliente com
+10 vencimentos e 5 quitados sai com as 10 linhas no extrato (cada uma com seu
+status) e o rodapé dizendo *5 pendências* com a soma só dessas 5. Se a lista não
+tiver nenhuma em aberto (filtro em *Pagos*), o rodapé mostra R$ 0,00 e
+“Nenhuma pendência em aberto”.
+
+Conteúdo da imagem — de propósito enxuto, porque ela vai para o cliente:
+
+| Campo             | Observação                                            |
+| ----------------- | ----------------------------------------------------- |
+| Nome (título)     | cabeçalho azul, centralizado, sob “Extrato de Pendências” |
+| Data Solicitação  | uma linha por cobrança                                 |
+| Valor             | **valor final** (com juros do período já embutidos)    |
+| Data Pagamento    | vencimento                                            |
+| Status            | Pago (verde) / Atrasado `N`d (vermelho) / Vence Hoje (laranja) / Em Aberto (vermelho claro) |
+| **Valor Total em Aberto** | soma **só das cobranças em aberto**, com a contagem de pendências |
+
+**Porcentagem e lucro não aparecem** no extrato. As linhas vêm ordenadas pela
+data de vencimento (mais antiga primeiro).
+
+Se a busca estiver pegando mais de um cliente (ex.: digitar só “João” e existirem
+dois), o app avisa e pede para selecionar um cliente específico — o extrato é
+sempre de uma pessoa só.
+
+Código: `gerarExtratoCliente()` e `desenharExtrato()` no `index.html`, usando
+html2canvas — a mesma técnica do recibo.
+
 ## Como fazer alterações com segurança (passo a passo)
 
 A regra de ouro: **testar no PC antes de publicar.**
 
 1. Edite o `index.html` nesta pasta (`D:\Claude_VS_Code\Gestao-cobrancas-main`).
 2. Abra o arquivo no navegador do PC e teste tudo (login, salvar, excluir,
-   dashboard, recibo, botões de mensagem).
+   dashboard, recibo, extrato, botões de mensagem).
 3. Deu certo? Publique:
 
    ```bash
