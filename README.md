@@ -81,6 +81,21 @@ A mensagem de atraso é detalhada: mostra a data do vencimento, os dias de atras
 o valor original, os juros acumulados, o total atualizado do dia e a chave PIX.
 A saudação (Bom dia / Boa tarde / Boa noite) acompanha o horário do envio.
 
+## Ocultar valores (👁️)
+
+O botão do olho fica na **barra azul do topo, à direita das abas** (ao lado de
+*Cadastro*, embaixo do “Conectado”) — um só botão, no mesmo lugar em todas as
+abas. Antes existiam dois, um na aba Clientes e outro no Dashboard.
+
+Clicando, os valores em R$ ficam borrados (`filter: blur`) e o ícone vira 🙈;
+clicando de novo, voltam. Vale para as quatro abas ao mesmo tempo, porque a
+classe `valores-ocultos` é aplicada na `.main` inteira: cards de totais, coluna
+de valores da tabela, resumo do cliente, painéis de vencimento, gráficos do
+dashboard e a prévia de *Valor Final / Seu Lucro* da aba Nova.
+
+É só visual, para usar o app perto de outras pessoas — nada muda no banco, e o
+estado volta ao normal ao recarregar a página.
+
 ## Extrato do cliente (📄 Extrato)
 
 Serve para lembrar um cliente de **vários vencimentos de uma vez**, em vez de
