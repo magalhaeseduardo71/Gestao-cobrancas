@@ -396,6 +396,10 @@
     .valores-ocultos .td-money,
     .valores-ocultos #dashStats .stat-value,
     .valores-ocultos #tab-dashboard .chart-canvas,
+    .valores-ocultos .td-money small,
+    .valores-ocultos .inv-chip b,
+    .valores-ocultos .inv-split .is-dele,
+    .valores-ocultos .inv-split .is-meu,
     .valores-ocultos #resultPreview .rp-value.green {
       filter: blur(7px);
       user-select: none;
@@ -424,6 +428,96 @@
     }
     .cad-item-del:hover { opacity: 1; background: rgba(214,48,49,0.12); }
     .cad-vazio { text-align: center; color: #9aa3b2; font-size: 0.85rem; padding: 18px 0; }
+
+    /* ══ INVESTIDORES ══ */
+
+    /* Emblema com a sigla do investidor (ex.: Roberto Carlos → RC) */
+    .inv-sigla {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 24px; height: 20px; padding: 0 5px;
+      border-radius: 6px; margin-right: 7px; vertical-align: middle;
+      font-size: 0.64rem; font-weight: 800; letter-spacing: 0.6px;
+      color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.18);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.28);
+      flex: none; cursor: help; user-select: none;
+    }
+    /* Sigla maiorzinha dentro da linha de detalhe */
+    .inv-chip .inv-sigla { margin-right: 6px; height: 18px; min-width: 22px; font-size: 0.62rem; }
+
+    /* Setinha que abre o detalhe do investidor */
+    .btn-seta {
+      background: transparent; border: none; cursor: pointer;
+      font-size: 0.7rem; color: var(--green); padding: 2px 4px;
+      border-radius: 5px; transition: transform 0.15s, background 0.15s;
+      display: inline-block; line-height: 1;
+    }
+    .btn-seta:hover { background: rgba(42,157,78,0.12); }
+    .btn-seta.aberta { transform: rotate(90deg); }
+
+    /* Linha de detalhe do investidor (abre embaixo da cobrança) */
+    tr.linha-inv td {
+      background: #f2fbf5 !important;
+      border-bottom: 1px solid #d7efdf !important;
+      padding: 10px 15px 12px 30px;
+      white-space: normal;
+    }
+    tr.linha-inv:hover td { background: #eaf7ef !important; }
+    .inv-detalhe { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .inv-chip {
+      background: var(--white); border: 1px solid #cbe8d5; border-radius: 20px;
+      padding: 5px 12px; font-size: 0.76rem; color: var(--text-mid);
+    }
+    .inv-chip b { color: var(--text-dark); font-weight: 700; }
+    .inv-chip.chip-dele b { color: #b45309; }
+    .inv-chip.chip-meu  b { color: var(--green); }
+    .inv-chip.chip-nome { background: #eaf7ef; border-color: #a8dcbb; font-weight: 700; color: #1e7e3c; }
+    .btn-recibo-inv {
+      background: #1e7e3c; border-color: #1e7e3c; color: #fff;
+      font-weight: 700; cursor: pointer; transition: background 0.15s;
+    }
+    .btn-recibo-inv:hover { background: #17672f; border-color: #17672f; }
+
+    /* Bloco de investidor nos formulários (Nova / Editar) */
+    .inv-box {
+      border: 1px solid #d7dde8; border-radius: 10px;
+      padding: 12px 14px; margin-bottom: 14px; background: #fafbfd;
+    }
+    .inv-box.ativa { border-color: #a8dcbb; background: #f4fbf6; }
+    .inv-head { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+    .inv-head input[type=checkbox] { width: 17px; height: 17px; accent-color: var(--green); cursor: pointer; flex: none; }
+    .inv-head label { font-size: 0.85rem; font-weight: 600; color: var(--text-mid); cursor: pointer; margin: 0; }
+    .inv-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .inv-campos .full { grid-column: 1 / -1; }
+    @media (max-width: 480px) { .inv-campos { grid-template-columns: 1fr; } }
+    .inv-campos select {
+      width: 100%; padding: 9px 12px; border: 1.5px solid #dde3ec;
+      border-radius: 8px; font-size: 0.88rem; background: var(--white); outline: none;
+    }
+    .inv-campos select:focus { border-color: var(--green); }
+    .inv-split {
+      margin-top: 12px; background: #eaf7ef; border: 1px solid #bfe5cd;
+      border-radius: 8px; padding: 10px 14px; font-size: 0.83rem;
+    }
+    .inv-split .is-row { display: flex; justify-content: space-between; padding: 3px 0; }
+    .inv-split .is-row + .is-row { border-top: 1px dashed #cfe9d9; }
+    .inv-split .is-dele { color: #b45309; font-weight: 700; }
+    .inv-split .is-meu  { color: var(--green); font-weight: 700; }
+    .inv-aviso { color: var(--red); font-size: 0.78rem; margin-top: 8px; font-weight: 600; }
+
+    /* Sub-abas do Cadastro (Clientes | Investidores) */
+    .cad-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
+    .cad-toggle button {
+      flex: 1; padding: 10px; border: 1.5px solid #dde3ec; background: var(--white);
+      border-radius: 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-mid);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .cad-toggle button.active { background: var(--green); border-color: var(--green); color: #fff; }
+
+    .inv-item-pct {
+      background: #eaf7ef; color: #1e7e3c; border: 1px solid #bfe5cd;
+      border-radius: 20px; padding: 2px 10px; font-size: 0.74rem; font-weight: 700;
+      margin-left: auto; margin-right: 6px; flex: none;
+    }
 
     .filter-btn {
       padding: 6px 16px;
@@ -1170,7 +1264,7 @@
           <div class="result-preview" id="resultPreview">
             <div class="rp-row"><span class="rp-label">Data de Solicitação</span><span class="rp-value" id="pDataSolic">—</span></div>
             <div class="rp-row"><span class="rp-label">Valor Final</span><span class="rp-value green" id="pValorFinal">—</span></div>
-            <div class="rp-row"><span class="rp-label">Seu Lucro</span><span class="rp-value green" id="pLucro">—</span></div>
+            <div class="rp-row"><span class="rp-label" id="pLucroLabel">Seu Lucro</span><span class="rp-value green" id="pLucro">—</span></div>
             <div class="rp-row"><span class="rp-label">Data de Pagamento</span><span class="rp-value" id="pDataPag">—</span></div>
           </div>
         </div>
@@ -1191,7 +1285,7 @@
               <label for="fixoValor">Valor (Lucro)</label>
               <div class="input-wrap">
                 <span class="prefix">R$</span>
-                <input type="number" id="fixoValor" placeholder="Ex: 500,00" min="0" step="0.01" />
+                <input type="number" id="fixoValor" placeholder="Ex: 500,00" min="0" step="0.01" oninput="calcPreview()" />
               </div>
             </div>
             <div class="form-group">
@@ -1206,6 +1300,38 @@
                 <input type="date" id="fixoDataPag" />
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- DINHEIRO DE INVESTIDOR (vale para os dois modos) -->
+        <div class="inv-box" id="invBox">
+          <div class="inv-head" onclick="if(event.target.tagName!=='INPUT'){const c=document.getElementById('invAtivo');c.checked=!c.checked;toggleInvestidor();}">
+            <input type="checkbox" id="invAtivo" onchange="toggleInvestidor()" />
+            <label for="invAtivo">💼 Dinheiro de investidor (lucro dividido)</label>
+          </div>
+          <div class="inv-campos" id="invCampos" style="display:none">
+            <div class="full">
+              <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;">Investidor</label>
+              <select id="invSelect" onchange="onTrocarInvestidor()">
+                <option value="">Selecione o investidor...</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;">Aporte</label>
+              <div class="input-wrap">
+                <span class="prefix">R$</span>
+                <input type="number" id="invAporte" min="0" step="0.01" placeholder="0,00"
+                       oninput="this.dataset.tocado='1';calcPreview()" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;">% do investidor</label>
+              <div class="input-wrap">
+                <input type="number" id="invPct" min="0" step="0.01" placeholder="Ex: 20" oninput="calcPreview()" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+            <div class="full" id="invSplit" style="display:none"></div>
           </div>
         </div>
 
@@ -1233,6 +1359,10 @@
         <button class="filter-btn active" data-filtro="todos"  onclick="setFiltroStatus('todos')">Todos</button>
         <button class="filter-btn"        data-filtro="aberto" onclick="setFiltroStatus('aberto')">Em Aberto</button>
         <button class="filter-btn"        data-filtro="pago"   onclick="setFiltroStatus('pago')">Pagos</button>
+        <span style="width:1px;height:22px;background:#dde3ec;margin:0 4px"></span>
+        <button class="filter-btn active" data-capital="todos"     onclick="setFiltroCapital('todos')">💰 Todo capital</button>
+        <button class="filter-btn"        data-capital="proprio"   onclick="setFiltroCapital('proprio')">👤 Meu capital</button>
+        <button class="filter-btn"        data-capital="investidor" onclick="setFiltroCapital('investidor')">💼 De investidor</button>
       </div>
 
       <div class="cliente-search-row">
@@ -1278,7 +1408,7 @@
               <th>%</th>
               <th>Dias</th>
               <th>Val. Final</th>
-              <th>Lucro</th>
+              <th title="Lucro que sobra para você, já descontada a parte do investidor">Lucro (Meu)</th>
               <th>Dt. Pagamento</th>
               <th>Status</th>
               <th style="text-align:center">Ações</th>
@@ -1314,6 +1444,14 @@
 
     <!-- ── TAB: CADASTRO DE CLIENTES ── -->
     <div id="tab-cadastro" class="tab-panel">
+
+      <div class="cad-toggle">
+        <button id="btnCadClientes"     class="active" onclick="setCadastroModo('clientes')">👥 Clientes</button>
+        <button id="btnCadInvestidores"          onclick="setCadastroModo('investidores')">💼 Investidores</button>
+      </div>
+
+      <!-- ── CADASTRO: CLIENTES ── -->
+      <div id="cadSecClientes">
       <div class="card">
         <div class="card-title">Cadastro de Clientes</div>
         <p style="font-size:0.82rem;color:#666;margin:-4px 0 14px;">
@@ -1341,6 +1479,49 @@
         </div>
         <div id="cadLista" class="cad-lista"></div>
       </div>
+      </div>
+
+      <!-- ── CADASTRO: INVESTIDORES ── -->
+      <div id="cadSecInvestidores" style="display:none">
+        <div class="card">
+          <div class="card-title">Cadastro de Investidores</div>
+          <p style="font-size:0.82rem;color:#666;margin:-4px 0 14px;">
+            Quem coloca dinheiro nos empréstimos. A <strong>%</strong> é calculada sobre o aporte
+            e é o lucro que você devolve junto com o capital. Ex.: aporte de R$ 100 com 20% → você
+            devolve R$ 120 e o restante do lucro é seu.
+          </p>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label for="novoInvNome">Nome do Investidor</label>
+              <div class="input-wrap">
+                <input type="text" id="novoInvNome" placeholder="Ex: Carlos" autocomplete="off"
+                       onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarInvestidor();}" />
+              </div>
+            </div>
+            <div class="form-group full">
+              <label for="novoInvPct">% padrão <span style="font-weight:400;color:#aaa">(sobre o aporte)</span></label>
+              <div class="input-wrap">
+                <input type="number" id="novoInvPct" value="20" min="0" step="0.01" placeholder="Ex: 20"
+                       onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarInvestidor();}" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-green" onclick="adicionarInvestidor()">➕ Cadastrar Investidor</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="cad-list-head">
+            <div class="card-title" style="margin:0;">Investidores (<span id="invTotal">0</span>)</div>
+            <input type="text" id="invBuscaInput" class="cad-busca" placeholder="🔍 Buscar..." autocomplete="off"
+                   oninput="renderCadastroInvestidores()" />
+          </div>
+          <div id="invLista" class="cad-lista"></div>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -1410,7 +1591,7 @@
         </div>
         <div class="form-group full">
           <label>Valor (Lucro)</label>
-          <div class="input-wrap"><span class="prefix">R$</span><input type="number" id="editFixoValor" min="0" step="0.01" /></div>
+          <div class="input-wrap"><span class="prefix">R$</span><input type="number" id="editFixoValor" min="0" step="0.01" oninput="calcEditarPreview()" /></div>
         </div>
         <div class="form-group">
           <label>Data de Solicitação</label>
@@ -1420,6 +1601,37 @@
           <label>Data de Pagamento</label>
           <div class="input-wrap"><input type="date" id="editFixoDataPag" /></div>
         </div>
+      </div>
+    </div>
+
+    <!-- Investidor (vale para os dois modos) -->
+    <div class="inv-box" id="editInvBox" style="margin-top:14px">
+      <div class="inv-head" onclick="if(event.target.tagName!=='INPUT'){const c=document.getElementById('editInvAtivo');c.checked=!c.checked;toggleInvestidorEditar();}">
+        <input type="checkbox" id="editInvAtivo" onchange="toggleInvestidorEditar()" />
+        <label for="editInvAtivo">💼 Dinheiro de investidor (lucro dividido)</label>
+      </div>
+      <div class="inv-campos" id="editInvCampos" style="display:none">
+        <div class="full">
+          <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;">Investidor</label>
+          <select id="editInvSelect" onchange="onTrocarInvestidorEditar()">
+            <option value="">Selecione o investidor...</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;">Aporte</label>
+          <div class="input-wrap">
+            <span class="prefix">R$</span>
+            <input type="number" id="editInvAporte" min="0" step="0.01" placeholder="0,00" oninput="calcEditarPreview()" />
+          </div>
+        </div>
+        <div>
+          <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;">% do investidor</label>
+          <div class="input-wrap">
+            <input type="number" id="editInvPct" min="0" step="0.01" placeholder="Ex: 20" oninput="calcEditarPreview()" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="full" id="editInvSplit" style="display:none"></div>
       </div>
     </div>
 
@@ -1472,6 +1684,7 @@ let db              = null;
 let auth            = null;
 let clientesCache   = [];
 let clientesCadastradosCache = [];   // clientes do nó Firebase 'clientesCadastrados'
+let investidoresCache = [];          // investidores do nó Firebase 'investidores'
 let registryCarregado = false;       // já recebeu o 1º snapshot de clientesCadastrados
 let cobrancasCarregadas = false;     // já recebeu o 1º snapshot de clientes
 let seedFeito         = false;       // evita re-importar clientes existentes
@@ -1619,6 +1832,19 @@ function iniciarApp() {
     atualizarDatalistClientes();
     if (activeTab === 'cadastro') renderCadastro();
     garantirSeedClientes();
+  });
+
+  // Nó de investidores (quem coloca capital nos empréstimos)
+  db.ref('investidores').on('value', snapshot => {
+    investidoresCache = [];
+    snapshot.forEach(child => {
+      investidoresCache.push({ ...child.val(), fk: child.key });
+    });
+    investidoresCache.sort((a, b) =>
+      (a.nome || '').localeCompare(b.nome || '', 'pt', { sensitivity: 'base' }));
+    atualizarSelectsInvestidores();
+    if (activeTab === 'cadastro') renderCadastroInvestidores();
+    if (activeTab === 'clientes') renderTabela();
   });
 }
 
@@ -2050,7 +2276,7 @@ function showTab(tab) {
   activeTab = tab;
   if (tab === 'clientes')  renderTabela();
   if (tab === 'dashboard') renderDashboard();
-  if (tab === 'cadastro')  renderCadastro();
+  if (tab === 'cadastro')  setCadastroModo(cadastroModo);
 }
 
 // ─────────────────────────────
@@ -2069,6 +2295,9 @@ function calcPreview() {
 
   if (isNaN(valorA) || isNaN(pct) || isNaN(dias) || valorA <= 0 || dias <= 0) {
     document.getElementById('resultPreview').style.display = 'none';
+    // No modo Valor Fixo o split usa o valor de lucro digitado lá
+    const lucroFixo = parseFloat(document.getElementById('fixoValor').value) || 0;
+    desenharSplit('invSplit', lerBlocoInvestidor(0), modoAtual === 'fixo' ? lucroFixo : 0);
     preview = null; return;
   }
 
@@ -2087,6 +2316,40 @@ function calcPreview() {
   document.getElementById('pLucro').textContent      = fmt(lucro);
   document.getElementById('pDataPag').textContent    = preview.dataPag;
   document.getElementById('resultPreview').style.display = 'block';
+
+  // Divisão com o investidor (se o bloco estiver ligado)
+  const inv = lerBlocoInvestidor(valorA);
+  desenharSplit('invSplit', inv, lucro);
+  if (inv && inv.valido) {
+    preview.inv = inv;
+    preview.lucroMeu = lucro - inv.aporte * (inv.pct / 100);
+  }
+  // Com investidor, esse lucro ainda é o bruto — o seu sai na caixa da divisão
+  document.getElementById('pLucroLabel').textContent =
+    (inv && inv.valido) ? 'Lucro do Empréstimo' : 'Seu Lucro';
+}
+
+// Monta os campos de investidor que vão para o Firebase.
+// Sem investidor, grava null para limpar o que existia.
+function camposInvestidor(inv) {
+  if (!inv || !inv.valido) {
+    return { investidorFk: null, investidorNome: null, investidorPct: null, aporte: null };
+  }
+  return {
+    investidorFk:   inv.fk,
+    investidorNome: inv.nome,
+    investidorPct:  inv.pct,
+    aporte:         inv.aporte
+  };
+}
+
+// Valida o bloco de investidor antes de salvar. Devolve false se estiver incompleto.
+function validarBlocoInvestidor(inv) {
+  if (!document.getElementById('invAtivo').checked) return true;
+  if (!inv || !inv.fk)        { alert('Selecione o investidor (ou desmarque "Dinheiro de investidor").'); return false; }
+  if (!inv.aporte || inv.aporte <= 0) { alert('Informe o aporte do investidor.'); return false; }
+  if (isNaN(inv.pct) || inv.pct < 0)  { alert('Informe a % do investidor.'); return false; }
+  return true;
 }
 
 // ─────────────────────────────
@@ -2114,6 +2377,9 @@ function salvar() {
 
     const dias = Math.round((new Date(dataPag+'T12:00:00') - new Date(dataSolic+'T12:00:00')) / 86400000);
 
+    const invFixo = lerBlocoInvestidor(0);
+    if (!validarBlocoInvestidor(invFixo)) return;
+
     setLoading(true);
     db.ref('clientes').push({
       id:           Date.now(),
@@ -2128,7 +2394,8 @@ function salvar() {
       dataPagISO:   dataPag,
       dataPag:      isoParaBR(dataPag),
       status:       'aberto',
-      tipoFixo:     true
+      tipoFixo:     true,
+      ...camposInvestidor(invFixo)
     }).then(() => {
       setLoading(false);
       alert('✅ Registro salvo!');
@@ -2147,10 +2414,14 @@ function salvar() {
   }
   if (!preview) { alert('Preencha todos os campos.'); return; }
 
+  const invJuros = lerBlocoInvestidor(preview.valorA);
+  if (!validarBlocoInvestidor(invJuros)) return;
+
   setLoading(true);
   db.ref('clientes').push({
     id:          Date.now(),
     nome,
+    ...camposInvestidor(invJuros),
     dataSolicISO: preview.dataSolicISO,
     dataSolic:    preview.dataSolic,
     valorA:       preview.valorA,
@@ -2183,12 +2454,23 @@ function limpar() {
   // Fixo
   ['fixoNome','fixoValor','fixoDataPag'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('fixoDataSolic').value = hojeISO();
+  // Investidor
+  document.getElementById('invAtivo').checked = false;
+  document.getElementById('invSelect').value  = '';
+  const ap = document.getElementById('invAporte');
+  ap.value = ''; delete ap.dataset.tocado;
+  document.getElementById('invPct').value = '';
+  document.getElementById('invCampos').style.display = 'none';
+  document.getElementById('invBox').classList.remove('ativa');
+  document.getElementById('invSplit').style.display = 'none';
 }
 
 // ─────────────────────────────
 //  FILTRO
 // ─────────────────────────────
 let filtroAtual   = 'todos';
+let filtroCapital = 'todos';   // 'todos' | 'proprio' | 'investidor'
+let linhasInvAbertas = new Set();   // cobranças com o detalhe do investidor expandido
 let filtroCliente = '';
 let buscaCliente  = '';
 let listaFiltradaCache = [];   // lista exibida na tabela (base do extrato)
@@ -2202,6 +2484,7 @@ function setModo(modo) {
   document.getElementById('formFixo').style.display  = modo === 'fixo'  ? 'block' : 'none';
   document.getElementById('btnModoJuros').classList.toggle('active', modo === 'juros');
   document.getElementById('btnModoFixo').classList.toggle('active',  modo === 'fixo');
+  calcPreview();   // reavalia a divisão com o investidor no novo modo
 }
 
 function setFiltro(f, btn) {
@@ -2218,8 +2501,17 @@ function setFiltroStatus(f) {
     sincronizarBotoesDias();
   }
   // Atualiza apenas os botões do filter-row principal (por data-filtro)
-  document.querySelectorAll('.filter-row .filter-btn').forEach(b => {
+  document.querySelectorAll('.filter-row .filter-btn[data-filtro]').forEach(b => {
     b.classList.toggle('active', b.dataset.filtro === f);
+  });
+  renderTabela();
+}
+
+// Filtro por origem do capital: todos / meu capital / de investidor
+function setFiltroCapital(f) {
+  filtroCapital = f;
+  document.querySelectorAll('.filter-row .filter-btn[data-capital]').forEach(b => {
+    b.classList.toggle('active', b.dataset.capital === f);
   });
   renderTabela();
 }
@@ -2331,6 +2623,89 @@ function lucroAReceber(c) {
   return diasAteVencer(c.dataPagISO) < 0 ? base + calcAtraso(c).juros : base;
 }
 
+// ─────────────────────────────
+//  INVESTIDORES — regra de divisão
+//
+//  O investidor entra com um APORTE (ex.: R$ 100) e recebe de volta o aporte
+//  mais uma PORCENTAGEM sobre ele (ex.: 20% = R$ 20) → devolução de R$ 120.
+//  Todo o resto do lucro é seu. Se o empréstimo saiu a 50% (lucro R$ 50),
+//  sobram R$ 30 para você.
+//
+//  Os juros de atraso (5%/dia) são 100% seus — a parte do investidor é fixa
+//  no percentual combinado sobre o aporte e não cresce com o atraso.
+// ─────────────────────────────
+
+// A cobrança foi bancada por um investidor?
+function temInvestidor(c) {
+  return !!(c && (c.investidorFk || c.investidorNome));
+}
+
+// Capital que o investidor colocou nesta cobrança
+function aporteDe(c) {
+  return temInvestidor(c) ? (Number(c.aporte) || 0) : 0;
+}
+
+// Lucro que fica com o investidor (% sobre o aporte)
+function lucroInvestidorDe(c) {
+  if (!temInvestidor(c)) return 0;
+  return aporteDe(c) * ((Number(c.investidorPct) || 0) / 100);
+}
+
+// Total que volta para o investidor: aporte + lucro dele
+function devolucaoInvestidorDe(c) {
+  return temInvestidor(c) ? aporteDe(c) + lucroInvestidorDe(c) : 0;
+}
+
+// Lucro que sobra para você (pode ficar negativo se a % dele for alta demais)
+function lucroMeuDe(c) {
+  return (Number(c.lucro) || 0) - lucroInvestidorDe(c);
+}
+
+// Seu lucro considerando também os juros de atraso (que são todos seus)
+function lucroMeuAReceber(c) {
+  return lucroAReceber(c) - lucroInvestidorDe(c);
+}
+
+// Nome do investidor para exibição (usa o cadastro atual, com fallback no gravado)
+function nomeInvestidor(c) {
+  if (!temInvestidor(c)) return '';
+  const reg = investidoresCache.find(i => i.fk === c.investidorFk);
+  return reg ? reg.nome : (c.investidorNome || 'Investidor');
+}
+
+// Sigla do investidor: "Roberto Carlos" → RC, "Carlos" → CA
+function siglaInvestidor(nome) {
+  const partes = String(nome || '').trim().split(/\s+/).filter(Boolean);
+  if (!partes.length) return '??';
+  if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
+  return (partes[0].charAt(0) + partes[partes.length - 1].charAt(0)).toUpperCase();
+}
+
+// Cada investidor ganha uma cor fixa (sorteada pela chave, sempre a mesma)
+const CORES_INVESTIDOR = [
+  '#2a9d4e', // verde
+  '#3a7bd5', // azul
+  '#b45309', // laranja queimado
+  '#7c3aed', // roxo
+  '#c0392b', // vermelho
+  '#0e7490', // petróleo
+  '#be185d', // magenta
+  '#4d7c0f'  // verde oliva
+];
+
+function corInvestidor(c) {
+  const chave = String(c.investidorFk || c.investidorNome || '');
+  let h = 0;
+  for (let i = 0; i < chave.length; i++) h = (h * 31 + chave.charCodeAt(i)) >>> 0;
+  return CORES_INVESTIDOR[h % CORES_INVESTIDOR.length];
+}
+
+// Emblema pronto para colar na tabela
+function emblemaInvestidor(c) {
+  const nome = nomeInvestidor(c);
+  return `<span class="inv-sigla" style="background:${corInvestidor(c)}" title="Investidor: ${nome}">${siglaInvestidor(nome)}</span>`;
+}
+
 function atualizarSelectClientes() {
   const nomes = [...new Set(clientesCache.map(c => c.nome))].sort();
   const sel   = document.getElementById('selectCliente');
@@ -2433,6 +2808,164 @@ function renderCadastro() {
 }
 
 // ─────────────────────────────
+//  CADASTRO DE INVESTIDORES
+// ─────────────────────────────
+let cadastroModo = 'clientes';
+
+function setCadastroModo(modo) {
+  cadastroModo = modo;
+  document.getElementById('cadSecClientes').style.display     = modo === 'clientes'     ? 'block' : 'none';
+  document.getElementById('cadSecInvestidores').style.display = modo === 'investidores' ? 'block' : 'none';
+  document.getElementById('btnCadClientes').classList.toggle('active',     modo === 'clientes');
+  document.getElementById('btnCadInvestidores').classList.toggle('active', modo === 'investidores');
+  if (modo === 'investidores') renderCadastroInvestidores(); else renderCadastro();
+}
+
+function adicionarInvestidor() {
+  if (!db) return;
+  const input = document.getElementById('novoInvNome');
+  const nome  = input.value.trim();
+  const pct   = parseFloat(document.getElementById('novoInvPct').value);
+  if (!nome) { alert('Digite o nome do investidor.'); return; }
+  if (isNaN(pct) || pct < 0) { alert('Informe a % padrão do investidor (ex: 20).'); return; }
+  const existe = investidoresCache.some(i => (i.nome || '').trim().toLowerCase() === nome.toLowerCase());
+  if (existe) { alert('Este investidor já está cadastrado.'); return; }
+
+  db.ref('investidores').push({ nome, pct, criadoEm: Date.now() })
+    .then(() => {
+      input.value = '';
+      document.getElementById('novoInvPct').value = 20;
+      input.focus();
+      mostrarToast('💼 Investidor cadastrado!');
+    })
+    .catch(e => alert('Erro ao cadastrar: ' + e.message));
+}
+
+function removerInvestidor(fk, nome) {
+  if (!db) return;
+  const usados = clientesCache.filter(c => c.investidorFk === fk).length;
+  let msg = `Remover o investidor "${nome}"?`;
+  if (usados > 0) msg += `\n\n⚠️ Existe(m) ${usados} cobrança(s) com aporte dele. Elas continuarão marcadas como compartilhadas (com o nome guardado), mas ele some da lista de escolha.`;
+  if (!confirm(msg)) return;
+  db.ref('investidores/' + fk).remove()
+    .catch(e => alert('Erro ao remover: ' + e.message));
+}
+
+function renderCadastroInvestidores() {
+  const lista = document.getElementById('invLista');
+  if (!lista) return;
+  document.getElementById('invTotal').textContent = investidoresCache.length;
+
+  const busca = (document.getElementById('invBuscaInput').value || '').trim().toLowerCase();
+  const filtrados = busca
+    ? investidoresCache.filter(i => (i.nome || '').toLowerCase().includes(busca))
+    : investidoresCache;
+
+  if (filtrados.length === 0) {
+    lista.innerHTML = `<div class="cad-vazio">${
+      investidoresCache.length === 0
+        ? 'Nenhum investidor cadastrado ainda. Adicione o primeiro acima.'
+        : 'Nenhum investidor encontrado para esta busca.'
+    }</div>`;
+    return;
+  }
+
+  lista.innerHTML = filtrados.map(i => {
+    const nomeEsc = (i.nome || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const qtd = clientesCache.filter(c => c.investidorFk === i.fk).length;
+    // Mesma sigla e cor que aparecem na tabela, para bater na hora de olhar
+    const emblema = emblemaInvestidor({ investidorFk: i.fk, investidorNome: i.nome });
+    return `<div class="cad-item">
+      <span class="cad-item-nome">${emblema}${i.nome}${qtd ? ` <small style="font-weight:600;color:#9aa3b2">• ${qtd} cobrança${qtd !== 1 ? 's' : ''}</small>` : ''}</span>
+      <span class="inv-item-pct">${fmtPct(i.pct)}%</span>
+      <button class="cad-item-del" title="Remover" onclick="removerInvestidor('${i.fk}','${nomeEsc}')">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+// Formata a porcentagem sem casas decimais desnecessárias (20 e não 20,00)
+function fmtPct(v) {
+  const n = Number(v) || 0;
+  return n % 1 === 0 ? String(n) : n.toFixed(2).replace('.', ',');
+}
+
+// Preenche os <select> de investidor (aba Nova e modal Editar)
+function atualizarSelectsInvestidores() {
+  ['invSelect', 'editInvSelect'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const atual = sel.value;
+    sel.innerHTML = '<option value="">Selecione o investidor...</option>';
+    investidoresCache.forEach(i => {
+      const opt = document.createElement('option');
+      opt.value = i.fk;
+      opt.textContent = i.nome + ' — ' + fmtPct(i.pct) + '%';
+      opt.dataset.pct = i.pct;
+      if (i.fk === atual) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+// ─────────────────────────────
+//  BLOCO DE INVESTIDOR — ABA NOVA
+// ─────────────────────────────
+function toggleInvestidor() {
+  const ativo = document.getElementById('invAtivo').checked;
+  document.getElementById('invCampos').style.display = ativo ? 'grid' : 'none';
+  document.getElementById('invBox').classList.toggle('ativa', ativo);
+  if (ativo && investidoresCache.length === 0) {
+    alert('Nenhum investidor cadastrado ainda.\n\nVá em "👥 Cadastro" → "💼 Investidores" e cadastre o investidor primeiro.');
+  }
+  calcPreview();
+}
+
+function onTrocarInvestidor() {
+  const sel = document.getElementById('invSelect');
+  const inv = investidoresCache.find(i => i.fk === sel.value);
+  if (inv) document.getElementById('invPct').value = inv.pct;
+  calcPreview();
+}
+
+// Lê o bloco de investidor da aba Nova. Devolve null se estiver desligado.
+function lerBlocoInvestidor(valorBase) {
+  if (!document.getElementById('invAtivo').checked) return null;
+  const fk = document.getElementById('invSelect').value;
+  const aporteEl = document.getElementById('invAporte');
+  // Sem aporte digitado ainda, assume o valor solicitado do empréstimo
+  if (!aporteEl.dataset.tocado && valorBase > 0) aporteEl.value = valorBase;
+  const aporte = parseFloat(aporteEl.value);
+  const pct    = parseFloat(document.getElementById('invPct').value);
+  const inv    = investidoresCache.find(i => i.fk === fk);
+  return {
+    fk, nome: inv ? inv.nome : '',
+    aporte: isNaN(aporte) ? 0 : aporte,
+    pct:    isNaN(pct)    ? 0 : pct,
+    valido: !!fk && !isNaN(aporte) && aporte > 0 && !isNaN(pct) && pct >= 0
+  };
+}
+
+// Desenha a caixinha "X é dele, X é seu"
+function desenharSplit(elId, inv, lucroTotal) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!inv || !inv.valido) { el.style.display = 'none'; el.innerHTML = ''; return; }
+
+  const lucroDele = inv.aporte * (inv.pct / 100);
+  const devolucao = inv.aporte + lucroDele;
+  const lucroMeu  = lucroTotal - lucroDele;
+
+  el.style.display = 'block';
+  el.className = 'full inv-split';
+  el.innerHTML = `
+    <div class="is-row"><span>Aporte de ${inv.nome || 'investidor'}</span><span>${fmt(inv.aporte)}</span></div>
+    <div class="is-row"><span>Lucro do investidor (${fmtPct(inv.pct)}% do aporte)</span><span class="is-dele">${fmt(lucroDele)}</span></div>
+    <div class="is-row"><span><strong>Devolver ao investidor</strong></span><span class="is-dele">${fmt(devolucao)}</span></div>
+    <div class="is-row"><span><strong>Seu lucro</strong></span><span class="is-meu">${fmt(lucroMeu)}</span></div>
+    ${lucroMeu < 0 ? `<div class="inv-aviso">⚠️ O lucro do investidor está maior que o lucro do empréstimo — você fica no prejuízo.</div>` : ''}`;
+}
+
+// ─────────────────────────────
 //  PAINEL "A RECEBER NOS PRÓXIMOS X DIAS"
 // ─────────────────────────────
 function renderPainelVencimento(todos, lista) {
@@ -2447,7 +2980,9 @@ function renderPainelVencimento(todos, lista) {
 
   // Totais do período (a lista já vem com cliente/busca/janela aplicados)
   const totReceber = lista.reduce((s, c) => s + valorAReceber(c), 0);
-  const totLucro   = lista.reduce((s, c) => s + lucroAReceber(c), 0);
+  const totLucro   = lista.reduce((s, c) => s + lucroMeuAReceber(c), 0);
+  // Quanto desse dinheiro volta para investidores (capital + lucro deles)
+  const totInvestidor = lista.reduce((s, c) => s + devolucaoInvestidorDe(c), 0);
   const qtdClientes = new Set(lista.map(c => c.nome)).size;
 
   // Vencidos que ficaram de fora da janela (mesmos filtros de nome)
@@ -2498,9 +3033,14 @@ function renderPainelVencimento(todos, lista) {
           <div class="pv-valor pv-verde">${fmt(totReceber)}</div>
         </div>
         <div class="pv-item">
-          <div class="pv-label">Lucro Previsto</div>
+          <div class="pv-label">Meu Lucro Previsto</div>
           <div class="pv-valor pv-azul">${fmt(totLucro)}</div>
         </div>
+        ${totInvestidor > 0 ? `
+        <div class="pv-item">
+          <div class="pv-label">Volta p/ Investidores</div>
+          <div class="pv-valor" style="color:#b45309">${fmt(totInvestidor)}</div>
+        </div>` : ''}
         <div class="pv-item">
           <div class="pv-label">Cobranças</div>
           <div class="pv-valor pv-cinza">${lista.length}</div>
@@ -2529,13 +3069,17 @@ function renderTabela() {
   const somaAberto   = todos.filter(c => c.status==='aberto').reduce((s,c) => s+c.valorFinal, 0);
   // Renovado: cliente pagou só o lucro (juros), não o valorFinal completo
   const somaRecebido = todos.filter(c => c.status==='pago').reduce((s,c) => s + (c.renovado ? c.lucro : c.valorFinal), 0);
-  const somaLucro    = todos.filter(c => c.status==='pago').reduce((s,c) => s + c.lucro, 0);
+  // Lucro recebido já descontada a parte dos investidores — só o que é seu de verdade
+  const somaLucroMeu = todos.filter(c => c.status==='pago').reduce((s,c) => s + lucroMeuDe(c), 0);
+  const somaLucroInv = todos.filter(c => c.status==='pago').reduce((s,c) => s + lucroInvestidorDe(c), 0);
+  const temAlgumInv  = todos.some(temInvestidor);
 
   document.getElementById('statsRow').innerHTML = `
     <div class="stat-card"><div class="stat-label">Total Clientes</div><div class="stat-value">${todos.length}</div></div>
     <div class="stat-card"><div class="stat-label">Em Aberto</div><div class="stat-value sv-red">${fmt(somaAberto)}</div></div>
     <div class="stat-card"><div class="stat-label">Recebido</div><div class="stat-value sv-green">${fmt(somaRecebido)}</div></div>
-    <div class="stat-card"><div class="stat-label">Lucro Recebido</div><div class="stat-value sv-blue">${fmt(somaLucro)}</div></div>
+    <div class="stat-card"><div class="stat-label">Meu Lucro Recebido</div><div class="stat-value sv-blue">${fmt(somaLucroMeu)}</div></div>
+    ${temAlgumInv ? `<div class="stat-card" style="border-top-color:#b45309"><div class="stat-label">Lucro dos Investidores</div><div class="stat-value" style="color:#b45309">${fmt(somaLucroInv)}</div></div>` : ''}
   `;
 
   atualizarSelectClientes();
@@ -2543,6 +3087,8 @@ function renderTabela() {
   let lista = filtroAtual === 'todos' ? todos : todos.filter(c => c.status === filtroAtual);
   if (filtroCliente) lista = lista.filter(c => c.nome === filtroCliente);
   if (buscaCliente)  lista = lista.filter(c => c.nome.toLowerCase().includes(buscaCliente));
+  if (filtroCapital === 'investidor') lista = lista.filter(temInvestidor);
+  else if (filtroCapital === 'proprio') lista = lista.filter(c => !temInvestidor(c));
 
   // ── Janela de vencimento: só pendentes que vencem de hoje até hoje + N dias ──
   if (filtroDias !== null) {
@@ -2581,7 +3127,8 @@ function renderTabela() {
     // Totais da lista já com filtro de status aplicado
     const totSolic = lista.reduce((s,c) => s + (c.valorA || 0), 0);
     const totFinal = lista.reduce((s,c) => s + c.valorFinal,    0);
-    const totLucro = lista.reduce((s,c) => s + c.lucro,         0);
+    const totLucro    = lista.reduce((s,c) => s + lucroMeuDe(c),        0);
+    const totLucroInv = lista.reduce((s,c) => s + lucroInvestidorDe(c), 0);
     const qtd = lista.length;
     const nomeExibido = filtroCliente || buscaCliente;
     const statusLabel = filtroAtual === 'aberto' ? ' • Em Aberto' : filtroAtual === 'pago' ? ' • Pagos' : '';
@@ -2608,9 +3155,14 @@ function renderTabela() {
             <div class="ri-valor ri-azul">${fmt(totFinal)}</div>
           </div>
           <div class="resumo-item">
-            <div class="ri-label">Lucro Total</div>
+            <div class="ri-label">Meu Lucro</div>
             <div class="ri-valor ri-verde">${fmt(totLucro)}</div>
           </div>
+          ${totLucroInv > 0 ? `
+          <div class="resumo-item">
+            <div class="ri-label">Lucro do Investidor</div>
+            <div class="ri-valor" style="color:#b45309">${fmt(totLucroInv)}</div>
+          </div>` : ''}
         </div>
       </div>`;
   } else {
@@ -2663,14 +3215,22 @@ function renderTabela() {
       }
     }
 
-    return `<tr${trClass}>
-      <td class="td-nome" onclick="selecionarCliente('${nomeEsc}')"><strong>${c.nome}</strong></td>
+    // ── Capital de investidor: emblema com a sigla dele + seta para os detalhes ──
+    const comInv   = temInvestidor(c);
+    const meuLucro = lucroMeuDe(c);
+    const marcador = comInv
+      ? emblemaInvestidor(c) +
+        `<button class="btn-seta${linhasInvAbertas.has(c.fk) ? ' aberta' : ''}" title="Ver a divisão com ${nomeInvestidor(c)}" onclick="event.stopPropagation();toggleLinhaInv('${c.fk}')">▶</button> `
+      : '';
+
+    const linhaPrincipal = `<tr${trClass}>
+      <td class="td-nome" onclick="selecionarCliente('${nomeEsc}')">${marcador}<strong>${c.nome}</strong></td>
       <td>${c.dataSolic}</td>
       <td class="td-money">${fmt(c.valorA)}</td>
       <td>${c.pct > 0 ? c.pct+'%' : '—'}</td>
       <td>${c.dias}d</td>
       <td class="td-money"><strong>${fmt(c.valorFinal)}</strong></td>
-      <td class="td-money" style="color:var(--green)">${fmt(c.lucro)}</td>
+      <td class="td-money" style="color:${meuLucro < 0 ? 'var(--red)' : 'var(--green)'}">${fmt(meuLucro)}</td>
       <td>${c.dataPag}</td>
       <td>${badge}</td>
       <td>
@@ -2684,7 +3244,35 @@ function renderTabela() {
         </div>
       </td>
     </tr>`;
+
+    // ── Linha de detalhe: quanto é dele e quanto é seu ──
+    let linhaDetalhe = '';
+    if (comInv && linhasInvAbertas.has(c.fk)) {
+      const lucroDele = lucroInvestidorDe(c);
+      const atrasoInv = diasAteVencer(c.dataPagISO) < 0 && c.status !== 'pago' ? calcAtraso(c).juros : 0;
+      linhaDetalhe = `<tr class="linha-inv"><td colspan="10">
+        <div class="inv-detalhe">
+          <span class="inv-chip chip-nome">${emblemaInvestidor(c)}${nomeInvestidor(c)}</span>
+          <span class="inv-chip">Aporte <b>${fmt(aporteDe(c))}</b></span>
+          <span class="inv-chip">Lucro do empréstimo <b>${fmt(c.lucro)}</b></span>
+          <span class="inv-chip chip-dele">Lucro do investidor (${fmtPct(c.investidorPct)}%) <b>${fmt(lucroDele)}</b></span>
+          <span class="inv-chip chip-dele">Devolver <b>${fmt(devolucaoInvestidorDe(c))}</b></span>
+          <span class="inv-chip chip-meu">Seu lucro <b>${fmt(meuLucro)}</b></span>
+          ${atrasoInv > 0 ? `<span class="inv-chip chip-meu">Juros do atraso (só seus) <b>${fmt(atrasoInv)}</b></span>` : ''}
+          <button class="inv-chip btn-recibo-inv" title="Baixar o recibo de ${nomeInvestidor(c)} em imagem" onclick="gerarReciboInvestidor('${c.fk}')">🧾 Recibo do investidor</button>
+        </div>
+      </td></tr>`;
+    }
+
+    return linhaPrincipal + linhaDetalhe;
   }).join('');
+}
+
+// Abre/fecha a linha com a divisão do investidor
+function toggleLinhaInv(fk) {
+  if (linhasInvAbertas.has(fk)) linhasInvAbertas.delete(fk);
+  else linhasInvAbertas.add(fk);
+  renderTabela();
 }
 
 // ─────────────────────────────
@@ -2746,6 +3334,16 @@ function abrirModalRenovar(fk) {
       <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#666">Duração</span><strong>${c.dias} dias</strong></div>`;
   }
 
+  // Empréstimo com investidor: mostra a divisão que continua valendo
+  if (temInvestidor(c)) {
+    resumoEl.innerHTML += `
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #dbe4f0;">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #e2e8f0"><span style="color:#666">💼 Investidor</span><strong style="color:#1e7e3c">${nomeInvestidor(c)}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #e2e8f0"><span style="color:#666">Devolver ao investidor</span><strong style="color:#b45309">${fmt(devolucaoInvestidorDe(c))}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#666">Seu lucro</span><strong style="color:#2a9d4e">${fmt(lucroMeuDe(c))}</strong></div>
+      </div>`;
+  }
+
   // Data padrão = hoje
   document.getElementById('renovarData').value = hojeISO();
   atualizarPreviewRenovar();
@@ -2797,6 +3395,13 @@ function confirmarRenovacao() {
         status:       'aberto'
       };
       if (c.tipoFixo) novo.tipoFixo = true;
+      // Mantém o investidor: o capital dele continua nesse empréstimo
+      if (temInvestidor(c)) {
+        novo.investidorFk   = c.investidorFk || null;
+        novo.investidorNome = c.investidorNome || nomeInvestidor(c);
+        novo.investidorPct  = Number(c.investidorPct) || 0;
+        novo.aporte         = aporteDe(c);
+      }
       return db.ref('clientes').push(novo);
     })
     .then(() => {
@@ -2843,10 +3448,56 @@ function abrirModalEditar(fk) {
     document.getElementById('editPct').value       = c.pct;
     document.getElementById('editDias').value      = c.dias;
     document.getElementById('editDataSolic').value = c.dataSolicISO;
-    calcEditarPreview();
   }
 
+  // ── Bloco de investidor ──
+  const ativo = temInvestidor(c);
+  document.getElementById('editInvAtivo').checked = ativo;
+  document.getElementById('editInvSelect').value  = ativo ? (c.investidorFk || '') : '';
+  document.getElementById('editInvAporte').value  = ativo ? aporteDe(c) : '';
+  document.getElementById('editInvPct').value     = ativo ? (c.investidorPct != null ? c.investidorPct : '') : '';
+  document.getElementById('editInvCampos').style.display = ativo ? 'grid' : 'none';
+  document.getElementById('editInvBox').classList.toggle('ativa', ativo);
+
+  calcEditarPreview();
   document.getElementById('modalEditar').classList.add('open');
+}
+
+function toggleInvestidorEditar() {
+  const ativo = document.getElementById('editInvAtivo').checked;
+  document.getElementById('editInvCampos').style.display = ativo ? 'grid' : 'none';
+  document.getElementById('editInvBox').classList.toggle('ativa', ativo);
+  if (ativo && investidoresCache.length === 0) {
+    alert('Nenhum investidor cadastrado ainda.\n\nVá em "👥 Cadastro" → "💼 Investidores" e cadastre o investidor primeiro.');
+  }
+  // Sem aporte digitado, assume o valor solicitado do empréstimo
+  const ap = document.getElementById('editInvAporte');
+  if (ativo && !ap.value) {
+    const base = parseFloat(document.getElementById('editValorA').value);
+    if (!isNaN(base) && base > 0) ap.value = base;
+  }
+  calcEditarPreview();
+}
+
+function onTrocarInvestidorEditar() {
+  const inv = investidoresCache.find(i => i.fk === document.getElementById('editInvSelect').value);
+  if (inv) document.getElementById('editInvPct').value = inv.pct;
+  calcEditarPreview();
+}
+
+// Lê o bloco de investidor do modal Editar. Devolve null se estiver desligado.
+function lerBlocoInvestidorEditar() {
+  if (!document.getElementById('editInvAtivo').checked) return null;
+  const fk     = document.getElementById('editInvSelect').value;
+  const aporte = parseFloat(document.getElementById('editInvAporte').value);
+  const pct    = parseFloat(document.getElementById('editInvPct').value);
+  const inv    = investidoresCache.find(i => i.fk === fk);
+  return {
+    fk, nome: inv ? inv.nome : '',
+    aporte: isNaN(aporte) ? 0 : aporte,
+    pct:    isNaN(pct)    ? 0 : pct,
+    valido: !!fk && !isNaN(aporte) && aporte > 0 && !isNaN(pct) && pct >= 0
+  };
 }
 
 function setEditarModo(modo) {
@@ -2855,6 +3506,7 @@ function setEditarModo(modo) {
   document.getElementById('editarFormFixo').style.display  = modo === 'fixo'  ? 'block' : 'none';
   document.getElementById('editarBtnJuros').classList.toggle('active', modo === 'juros');
   document.getElementById('editarBtnFixo').classList.toggle('active',  modo === 'fixo');
+  calcEditarPreview();   // reavalia a divisão com o investidor no novo modo
 }
 
 function calcEditarPreview() {
@@ -2864,8 +3516,14 @@ function calcEditarPreview() {
   const data   = document.getElementById('editDataSolic').value;
   const prevEl = document.getElementById('editarPreview');
 
+  const invEd = lerBlocoInvestidorEditar();
+
   if (isNaN(valorA) || isNaN(pct) || isNaN(dias) || !data) {
-    prevEl.style.display = 'none'; return;
+    prevEl.style.display = 'none';
+    // No modo Valor Fixo o lucro é o próprio valor digitado
+    const lucroFixo = parseFloat(document.getElementById('editFixoValor').value) || 0;
+    desenharSplit('editInvSplit', invEd, editarModoAtual === 'fixo' ? lucroFixo : 0);
+    return;
   }
   const lucro      = valorA * (pct / 100) * (dias / 30);
   const valorFinal = valorA + lucro;
@@ -2875,12 +3533,22 @@ function calcEditarPreview() {
   document.getElementById('epLucro').textContent      = fmt(lucro);
   document.getElementById('epDataPag').textContent    = isoParaBR(dataPagISO);
   prevEl.style.display = 'block';
+
+  desenharSplit('editInvSplit', invEd, lucro);
 }
 
 function salvarEdicao() {
   if (!pendingEditarKey || !db) return;
   const fk = pendingEditarKey;
   let dados;
+
+  // Validação do bloco de investidor (vale para os dois modos)
+  const invEd = lerBlocoInvestidorEditar();
+  if (document.getElementById('editInvAtivo').checked) {
+    if (!invEd.fk)                      { alert('Selecione o investidor (ou desmarque "Dinheiro de investidor").'); return; }
+    if (!invEd.aporte || invEd.aporte <= 0) { alert('Informe o aporte do investidor.'); return; }
+    if (isNaN(invEd.pct) || invEd.pct < 0)  { alert('Informe a % do investidor.'); return; }
+  }
 
   if (editarModoAtual === 'fixo') {
     const nome      = document.getElementById('editFixoNome').value.trim();
@@ -2897,7 +3565,8 @@ function salvarEdicao() {
       valorA: 0, pct: 0, dias: dias >= 0 ? dias : 0,
       valorFinal: valor, lucro: valor,
       dataPagISO: dataPag, dataPag: isoParaBR(dataPag),
-      tipoFixo: true
+      tipoFixo: true,
+      ...camposInvestidor(invEd)
     };
   } else {
     const nome   = document.getElementById('editNome').value.trim();
@@ -2918,7 +3587,8 @@ function salvarEdicao() {
       dataSolicISO: data, dataSolic: isoParaBR(data),
       valorA, pct, dias, valorFinal, lucro,
       dataPagISO, dataPag: isoParaBR(dataPagISO),
-      tipoFixo: null   // null remove o campo se existia
+      tipoFixo: null,   // null remove o campo se existia
+      ...camposInvestidor(invEd)
     };
   }
 
@@ -3016,13 +3686,19 @@ function renderDashboard() {
 
   // Renovado: contabiliza só o lucro recebido, não o valorFinal do principal
   const totalFat   = todos.reduce((s,c) => s + (c.renovado ? c.lucro : c.valorFinal), 0);
-  const totalLucro = todos.reduce((s,c) => s + c.lucro, 0);
+  // Lucro já descontada a parte dos investidores
+  const totalLucro    = todos.reduce((s,c) => s + lucroMeuDe(c), 0);
+  const totalLucroInv = todos.reduce((s,c) => s + lucroInvestidorDe(c), 0);
+  const capitalInv    = todos.filter(c => c.status !== 'pago').reduce((s,c) => s + aporteDe(c), 0);
   const qtAberto   = todos.filter(c => c.status==='aberto').length;
   const qtPago     = todos.filter(c => c.status==='pago').length;
 
   document.getElementById('dashStats').innerHTML = `
     <div class="stat-card"><div class="stat-label">Faturamento Total</div><div class="stat-value sv-blue">${fmt(totalFat)}</div></div>
-    <div class="stat-card"><div class="stat-label">Lucro Total</div><div class="stat-value sv-green">${fmt(totalLucro)}</div></div>
+    <div class="stat-card"><div class="stat-label">Meu Lucro Total</div><div class="stat-value sv-green">${fmt(totalLucro)}</div></div>
+    ${totalLucroInv > 0 ? `
+    <div class="stat-card" style="border-top-color:#b45309"><div class="stat-label">Lucro dos Investidores</div><div class="stat-value" style="color:#b45309">${fmt(totalLucroInv)}</div></div>
+    <div class="stat-card" style="border-top-color:#b45309"><div class="stat-label">Capital de Terceiros na Rua</div><div class="stat-value" style="color:#b45309">${fmt(capitalInv)}</div></div>` : ''}
     <div class="stat-card"><div class="stat-label">Em Aberto</div><div class="stat-value sv-red">${qtAberto}</div></div>
     <div class="stat-card"><div class="stat-label">Pagos</div><div class="stat-value sv-green">${qtPago}</div></div>
   `;
@@ -3031,10 +3707,12 @@ function renderDashboard() {
   const porMes = {};
   todos.forEach(c => {
     const mes = c.dataSolicISO.substring(0, 7);
-    if (!porMes[mes]) porMes[mes] = { fat:0, lucro:0 };
-    porMes[mes].fat   += c.renovado ? c.lucro : c.valorFinal;
-    porMes[mes].lucro += c.lucro;
+    if (!porMes[mes]) porMes[mes] = { fat:0, lucro:0, lucroInv:0 };
+    porMes[mes].fat      += c.renovado ? c.lucro : c.valorFinal;
+    porMes[mes].lucro    += lucroMeuDe(c);          // só o que é seu
+    porMes[mes].lucroInv += lucroInvestidorDe(c);
   });
+  const temInvNoGrafico = Object.values(porMes).some(m => m.lucroInv > 0);
 
   const meses    = Object.keys(porMes).sort();
   const nMes     = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -3047,7 +3725,8 @@ function renderDashboard() {
       labels: labelsMes.length ? labelsMes : ['(sem dados)'],
       datasets: [
         { label:'Faturamento', data: meses.map(m=>porMes[m].fat),   backgroundColor:'rgba(58,123,213,0.75)', borderRadius:5 },
-        { label:'Lucro',       data: meses.map(m=>porMes[m].lucro), backgroundColor:'rgba(42,157,78,0.75)',  borderRadius:5 }
+        { label:'Meu Lucro',   data: meses.map(m=>porMes[m].lucro), backgroundColor:'rgba(42,157,78,0.75)',  borderRadius:5 },
+        ...(temInvNoGrafico ? [{ label:'Lucro Investidores', data: meses.map(m=>porMes[m].lucroInv), backgroundColor:'rgba(180,83,9,0.75)', borderRadius:5 }] : [])
       ]
     },
     options: {
@@ -3090,7 +3769,7 @@ function renderDashboard() {
     data: {
       labels: labelsMes.length ? labelsMes : ['(sem dados)'],
       datasets: [{
-        label: 'Lucro',
+        label: 'Meu Lucro',
         data: meses.map(m => porMes[m].lucro),
         borderColor: 'rgba(42,157,78,1)',
         backgroundColor: 'rgba(42,157,78,0.12)',
@@ -3099,11 +3778,23 @@ function renderDashboard() {
         pointRadius: 5,
         tension: 0.35,
         fill: true
-      }]
+      },
+      ...(temInvNoGrafico ? [{
+        label: 'Lucro Investidores',
+        data: meses.map(m => porMes[m].lucroInv),
+        borderColor: 'rgba(180,83,9,1)',
+        backgroundColor: 'rgba(180,83,9,0.10)',
+        borderWidth: 2,
+        borderDash: [5, 4],
+        pointBackgroundColor: 'rgba(180,83,9,1)',
+        pointRadius: 4,
+        tension: 0.35,
+        fill: false
+      }] : [])]
     },
     options: {
       responsive: true,
-      plugins: { legend: { display: false } },
+      plugins: { legend: { display: temInvNoGrafico, labels: { font:{size:10} } } },
       scales: {
         y: { ticks: { callback: v => 'R$'+fmtN(v), font:{size:9} }, beginAtZero: true },
         x: { ticks: { font:{size:9} } }
@@ -3223,6 +3914,114 @@ function desenharRecibo(d) {
       const url = URL.createObjectURL(blob);
       const a   = document.createElement('a');
       a.download = 'recibo-' + d.nome.toLowerCase().replace(/\s+/g, '-') + '.png';
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+    document.body.removeChild(wrapper);
+  });
+}
+
+// ─────────────────────────────
+//  RECIBO DO INVESTIDOR (HTML → PNG)
+//
+//  Mesma cara do recibo do cliente, mas na cor verde e com os números do
+//  investidor: o que ele investiu e o que recebe de volta (aporte + o lucro
+//  dele). Não mostra nada da sua margem — nem o lucro do empréstimo, nem a
+//  sua porcentagem.
+// ─────────────────────────────
+function gerarReciboInvestidor(fk) {
+  const c = clientesCache.find(c => c.fk === fk);
+  if (!c) return;
+  if (!temInvestidor(c)) {
+    alert('Esta cobrança não tem investidor.');
+    return;
+  }
+  desenharReciboInvestidor({
+    nome:       nomeInvestidor(c),
+    dataSolic:  c.dataSolic,
+    investido:  aporteDe(c),
+    aReceber:   devolucaoInvestidorDe(c),   // aporte + lucro dele
+    dataPag:    c.dataPag
+  });
+}
+
+function desenharReciboInvestidor(d) {
+  const rowStyle    = 'display:flex;align-items:center;gap:15px;padding:15px 0;border-bottom:1px solid #dcefe3;';
+  const rowLastStyle= 'display:flex;align-items:center;gap:15px;padding:15px 0;';
+  const iconStyle   = 'width:45px;height:45px;background:#e4f5ea;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;';
+  const contentStyle= 'flex:1;display:flex;justify-content:space-between;align-items:center;';
+  const labelStyle  = 'color:#5d6b63;font-size:14px;font-weight:500;';
+  const valueStyle  = 'color:#1a1a1a;font-size:15px;font-weight:600;';
+  const hlStyle     = 'color:#1e7e3c;font-size:18px;font-weight:700;';
+
+  // Verde mais leve que o azul do recibo do cliente
+  const faixa = 'background:linear-gradient(135deg,#3fa96a 0%,#63c489 100%);';
+
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-1;';
+  wrapper.innerHTML = `
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;width:560px;background:#f7fdf9;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.1);overflow:hidden;">
+      <div style="${faixa}padding:30px 20px;display:flex;align-items:center;justify-content:center;gap:15px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-50%;right:-10%;width:300px;height:300px;background:rgba(255,255,255,0.14);border-radius:50%;"></div>
+        <div style="width:50px;height:50px;background:rgba(255,255,255,0.25);border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;position:relative;z-index:1;">🤝</div>
+        <div style="color:white;font-size:26px;font-weight:700;letter-spacing:0.5px;position:relative;z-index:1;">CONFIRMAÇÃO DE INVESTIMENTO</div>
+      </div>
+      <div style="padding:30px 25px;">
+        <div style="${rowStyle}">
+          <div style="${iconStyle}">👤</div>
+          <div style="${contentStyle}">
+            <span style="${labelStyle}">Investidor</span>
+            <span style="${valueStyle}">${d.nome}</span>
+          </div>
+        </div>
+        <div style="${rowStyle}">
+          <div style="${iconStyle}">📅</div>
+          <div style="${contentStyle}">
+            <span style="${labelStyle}">Data da Solicitação</span>
+            <span style="${valueStyle}">${d.dataSolic}</span>
+          </div>
+        </div>
+        <div style="${rowStyle}">
+          <div style="${iconStyle}">💵</div>
+          <div style="${contentStyle}">
+            <span style="${labelStyle}">Valor Investido</span>
+            <span style="${valueStyle}">${fmt(d.investido)}</span>
+          </div>
+        </div>
+        <div style="${rowStyle}">
+          <div style="${iconStyle}">📈</div>
+          <div style="${contentStyle}">
+            <span style="${labelStyle}">Valor Final</span>
+            <span style="${hlStyle}">${fmt(d.aReceber)}</span>
+          </div>
+        </div>
+        <div style="${rowLastStyle}">
+          <div style="${iconStyle}">✅</div>
+          <div style="${contentStyle}">
+            <span style="${labelStyle}">Data de Pagamento</span>
+            <span style="${valueStyle}">${d.dataPag}</span>
+          </div>
+        </div>
+      </div>
+      <div style="${faixa}padding:20px 25px;display:flex;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden;">
+        <div style="position:absolute;bottom:-50%;left:-10%;width:300px;height:300px;background:rgba(255,255,255,0.14);border-radius:50%;"></div>
+        <div style="width:40px;height:40px;background:rgba(255,255,255,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;z-index:1;">💚</div>
+        <div style="color:white;font-size:15px;font-weight:700;letter-spacing:0.3px;position:relative;z-index:1;">Agradeço pela confiança e pela parceria!</div>
+      </div>
+    </div>`;
+
+  document.body.appendChild(wrapper);
+
+  html2canvas(wrapper.firstElementChild, {
+    scale: 2, useCORS: true, backgroundColor: null, logging: false
+  }).then(canvas => {
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.download = 'recibo-investidor-' + d.nome.toLowerCase().replace(/\s+/g, '-') + '.png';
       a.href = url;
       document.body.appendChild(a);
       a.click();
@@ -3364,18 +4163,29 @@ function exportarCSV() {
     return a.dataPagISO < b.dataPagISO ? -1 : a.dataPagISO > b.dataPagISO ? 1 : 0;
   });
 
-  const header = ['Nome','Dt. Solicitação','Valor Solicitado','Porcentagem','Dias','Valor Final','Lucro','Dt. Pagamento','Status'];
+  const header = ['Nome','Dt. Solicitação','Valor Solicitado','Porcentagem','Dias','Valor Final','Lucro Total',
+                  'Dt. Pagamento','Status','Capital','Investidor','Aporte','% Investidor','Lucro Investidor',
+                  'Devolver ao Investidor','Meu Lucro'];
+
+  const money = v => (Number(v) || 0).toFixed(2).replace('.', ',');
 
   const rows = lista.map(c => [
     `"${c.nome}"`,
     c.dataSolic,
-    c.valorA.toFixed(2).replace('.', ','),
+    money(c.valorA),
     c.pct > 0 ? c.pct : '—',
     c.dias,
-    c.valorFinal.toFixed(2).replace('.', ','),
-    c.lucro.toFixed(2).replace('.', ','),
+    money(c.valorFinal),
+    money(c.lucro),
     c.dataPag,
-    c.status === 'pago' ? 'Pago' : 'Em Aberto'
+    c.status === 'pago' ? 'Pago' : 'Em Aberto',
+    temInvestidor(c) ? 'Investidor' : 'Próprio',
+    temInvestidor(c) ? `"${nomeInvestidor(c)}"` : '—',
+    temInvestidor(c) ? money(aporteDe(c)) : '—',
+    temInvestidor(c) ? fmtPct(c.investidorPct) : '—',
+    temInvestidor(c) ? money(lucroInvestidorDe(c)) : '—',
+    temInvestidor(c) ? money(devolucaoInvestidorDe(c)) : '—',
+    money(lucroMeuDe(c))
   ]);
 
   const csv  = [header.join(';'), ...rows.map(r => r.join(';'))].join('\r\n');

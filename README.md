@@ -12,7 +12,9 @@ celular e no PC como uma página web única (PWA).
 ## Tecnologias
 
 - HTML/CSS/JS tudo dentro de um único `index.html` (sem build, sem instalação).
-- **Firebase Realtime Database** — guarda os clientes e as configurações.
+- **Firebase Realtime Database** — guarda as cobranças (`clientes`), os clientes
+  cadastrados (`clientesCadastrados`), os investidores (`investidores`) e as
+  configurações (`config`).
 - **Firebase Authentication (e-mail/senha)** — protege o acesso aos dados.
 - Chart.js (dashboard) e html2canvas (gerar recibos e extratos), carregados por CDN.
 
@@ -80,6 +82,144 @@ clicável e copia a mesma mensagem.
 A mensagem de atraso é detalhada: mostra a data do vencimento, os dias de atraso,
 o valor original, os juros acumulados, o total atualizado do dia e a chave PIX.
 A saudação (Bom dia / Boa tarde / Boa noite) acompanha o horário do envio.
+
+## Investidores (empréstimo com dinheiro de terceiros)
+
+Serve para controlar empréstimos bancados por outra pessoa, separando **o que é
+seu** do **que é dela**.
+
+### A regra do dinheiro
+
+O investidor entra com um **aporte** e recebe de volta o aporte mais uma
+**porcentagem sobre ele**. Todo o resto do lucro é seu.
+
+```
+lucro do investidor  = aporte × (% dele / 100)
+devolver a ele       = aporte + lucro do investidor
+SEU lucro            = lucro do empréstimo − lucro do investidor
+```
+
+Exemplo (o caso padrão): Carlos aporta **R$ 100**, você empresta a **50%** e a
+parte dele é **20%**.
+
+| Item                       | Valor      |
+| -------------------------- | ---------- |
+| Aporte do Carlos           | R$ 100,00  |
+| Valor final do empréstimo  | R$ 150,00  |
+| Lucro do empréstimo        | R$ 50,00   |
+| Lucro do Carlos (20%)      | R$ 20,00   |
+| **Devolver ao Carlos**     | **R$ 120,00** |
+| **Seu lucro**              | **R$ 30,00**  |
+
+**Os juros de atraso (5% ao dia) são 100% seus.** A parte do investidor é fixa no
+percentual combinado sobre o aporte e não cresce com o atraso.
+
+### Cadastrar um investidor
+
+Aba **👥 Cadastro** → botão **💼 Investidores**. Informe o nome e a **% padrão**
+dele (o app já sugere 20). Essa % é só o padrão: ao criar o empréstimo dá para
+mudar caso a caso.
+
+Os investidores ficam no nó `investidores` do Firebase — separado dos clientes.
+
+### Marcar um empréstimo como de investidor
+
+Na aba **➕ Nova**, embaixo do formulário, ligue **💼 Dinheiro de investidor
+(lucro dividido)**. Vale nos dois modos (Com Juros e Valor Fixo).
+
+- Ao escolher o investidor, a **%** dele vem preenchida do cadastro.
+- O **aporte** vem preenchido com o Valor Solicitado (é o caso normal), mas pode
+  ser alterado se ele bancou só uma parte.
+- Uma caixa verde mostra na hora **quanto é dele e quanto é seu**.
+
+Quando há investidor, a linha *Seu Lucro* da prévia passa a se chamar **Lucro do
+Empréstimo** (é o valor bruto) — o seu de verdade aparece na caixa da divisão.
+
+Dá para ligar/desligar isso depois em qualquer cobrança pelo botão **✏️**
+(Editar). Ao **🔄 Renovar**, o investidor é mantido automaticamente.
+
+### Como isso aparece na aba Clientes
+
+**Emblema com a sigla do investidor, antes do nome do cliente.** Um retângulo
+pequeno e colorido com as iniciais: *Roberto Carlos* vira **RC**, *Carlos* vira
+**CA**. Cada investidor tem **sua própria cor**, sempre a mesma (é sorteada pela
+chave dele no Firebase, não muda sozinha), e o mesmo emblema aparece na lista da
+aba Cadastro — bate na hora de olhar. Passando o mouse, mostra o nome completo.
+
+Cobrança com **capital próprio não tem emblema nenhum** — a ausência já diz que
+o lucro é todo seu.
+
+**Setinha ▶** — só nas linhas com emblema. Clique e abre embaixo a divisão
+daquele empréstimo: investidor, aporte, lucro do empréstimo, lucro do investidor,
+quanto devolver, seu lucro e (se estiver atrasado) os juros de atraso que são só
+seus.
+
+**Filtro de capital** — ao lado de *Todos / Em Aberto / Pagos*:
+💰 Todo capital • 👤 Meu capital • 💼 De investidor.
+
+Para trocar as cores ou acrescentar mais, mexa na constante `CORES_INVESTIDOR`
+do `index.html`. As funções são `siglaInvestidor()`, `corInvestidor()` e
+`emblemaInvestidor()`.
+
+### Recibo do investidor (🧾)
+
+Clique na **setinha ▶** da cobrança e, na linha que abre, no botão verde
+**🧾 Recibo do investidor**. Baixa um PNG (`recibo-investidor-nome.png`), do
+mesmo jeito que o recibo do cliente.
+
+É o mesmo desenho do recibo do cliente, mas **em verde** e com os números dele:
+
+| Campo               | O que mostra                                        |
+| ------------------- | --------------------------------------------------- |
+| Título              | **CONFIRMAÇÃO DE INVESTIMENTO** (faixa verde clara)  |
+| Investidor          | o nome do investidor, não o do cliente               |
+| Data da Solicitação | a mesma data do empréstimo                           |
+| Valor Investido     | o **aporte** dele                                    |
+| Valor Final         | **aporte + o lucro dele** — R$ 100 a 20% sai R$ 120  |
+| Data de Pagamento   | o vencimento do empréstimo                           |
+| Rodapé              | *"Agradeço pela confiança e pela parceria!"* — no lugar do aviso de 5% ao dia |
+
+O recibo do investidor **não mostra nada da sua margem**: nem o lucro do
+empréstimo, nem a sua porcentagem, nem o nome do cliente que pegou o dinheiro.
+
+Código: `gerarReciboInvestidor()` e `desenharReciboInvestidor()`.
+
+### O que mudou nos cálculos
+
+O dinheiro do investidor **não conta como seu**. Onde aparecia "Lucro" agora
+aparece o **lucro líquido**, já descontada a parte dele:
+
+| Onde                        | Antes          | Agora                                        |
+| --------------------------- | -------------- | -------------------------------------------- |
+| Coluna da tabela            | Lucro          | **Lucro (Meu)** — só o seu, limpo; o bruto fica na linha da setinha |
+| Card na aba Clientes        | Lucro Recebido | **Meu Lucro Recebido** + card *Lucro dos Investidores* |
+| Painel *A receber em*       | Lucro Previsto | **Meu Lucro Previsto** + *Volta p/ Investidores* |
+| Resumo do cliente filtrado  | Lucro Total    | **Meu Lucro** + *Lucro do Investidor*        |
+| Dashboard                   | Lucro Total    | **Meu Lucro Total** + *Lucro dos Investidores* + *Capital de Terceiros na Rua* |
+| Gráficos de barra e linha   | Lucro          | **Meu Lucro** + série *Lucro Investidores*   |
+
+Os totais **brutos** continuam brutos de propósito — *Em Aberto*, *Recebido* e
+*Faturamento* são o dinheiro que entra ou está na rua, independente de quem
+bancou. Quanto desse dinheiro tem dono aparece nos cards *Lucro dos Investidores*
+(aba Clientes) e *Capital de Terceiros na Rua* (Dashboard), e caso a caso na
+linha da setinha.
+
+O **CSV** ganhou as colunas *Capital, Investidor, Aporte, % Investidor, Lucro
+Investidor, Devolver ao Investidor* e *Meu Lucro*.
+
+### Cada um vê só o que é dele
+
+- **Recibo e extrato do cliente** continuam exatamente como eram: sem investidor,
+  sem porcentagem, sem lucro.
+- **Recibo do investidor** mostra o aporte dele e o que ele recebe de volta — e
+  nada da sua margem nem do cliente.
+
+A divisão completa (lucro do empréstimo, sua parte, a dele) é controle interno e
+só existe dentro do app.
+
+Código: bloco `INVESTIDORES — regra de divisão` no `index.html`
+(`temInvestidor`, `aporteDe`, `lucroInvestidorDe`, `devolucaoInvestidorDe`,
+`lucroMeuDe`, `lucroMeuAReceber`) e o emblema em `emblemaInvestidor()`.
 
 ## Ocultar valores (👁️)
 
