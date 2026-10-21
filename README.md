@@ -90,35 +90,65 @@ seu** do **que é dela**.
 
 ### A regra do dinheiro
 
-O investidor entra com um **aporte** e recebe de volta o aporte mais uma
-**porcentagem sobre ele**. Todo o resto do lucro é seu.
+O investidor entra com um **aporte** e a **% dele é uma fatia da % do
+empréstimo** — não um pedaço do valor em reais. Se você empresta a **50%** e ele
+entra com **10%**, então **10% são dele e 40% são seus**.
 
 ```
-lucro do investidor  = aporte × (% dele / 100)
+meses                = dias / 30           (no modo Valor Fixo, sempre 1)
+lucro do investidor  = aporte × (% dele / 100) × meses
 devolver a ele       = aporte + lucro do investidor
 SEU lucro            = lucro do empréstimo − lucro do investidor
 ```
 
-Exemplo (o caso padrão): Carlos aporta **R$ 100**, você empresta a **50%** e a
-parte dele é **20%**.
+Exemplo (o caso padrão): Carlos aporta **R$ 100**, você empresta a **50%** por
+**30 dias** e a parte dele é **10%**.
 
 | Item                       | Valor      |
 | -------------------------- | ---------- |
 | Aporte do Carlos           | R$ 100,00  |
 | Valor final do empréstimo  | R$ 150,00  |
-| Lucro do empréstimo        | R$ 50,00   |
-| Lucro do Carlos (20%)      | R$ 20,00   |
-| **Devolver ao Carlos**     | **R$ 120,00** |
-| **Seu lucro**              | **R$ 30,00**  |
+| Lucro do empréstimo (50%)  | R$ 50,00   |
+| Lucro do Carlos (10%)      | R$ 10,00   |
+| **Devolver ao Carlos**     | **R$ 110,00** |
+| **Seu lucro (40%)**        | **R$ 40,00**  |
 
-**Os juros de atraso (5% ao dia) são 100% seus.** A parte do investidor é fixa no
-percentual combinado sobre o aporte e não cresce com o atraso.
+**A parte dele acompanha o prazo, igual à sua.** Por ser uma fatia da taxa, o
+mesmo empréstimo em **60 dias** rende R$ 100 de lucro: **R$ 20 dele** (10% × 2
+meses) e **R$ 80 seus**. Em 15 dias seriam R$ 5 e R$ 20.
+
+**A % incide só sobre o dinheiro dele.** Se Carlos aportou R$ 100 num empréstimo
+de R$ 300 a 50%/30 dias, o lucro é R$ 150: **R$ 10 dele** (10% dos R$ 100 que
+ele pôs) e **R$ 140 seus** — o lucro dos outros R$ 200 é todo seu.
+
+No modo **Valor Fixo** não existe taxa nem prazo de juros, então a % dele é
+aplicada uma vez só sobre o aporte (aporte R$ 100 a 10% → R$ 10 dele).
+
+**Os juros de atraso (5% ao dia) são 100% seus.** A parte do investidor é
+fechada no vencimento e não cresce com o atraso.
+
+### Os empréstimos antigos ficaram na regra antiga
+
+A regra acima passou a valer em **22/set/2026**. Tudo que já estava cadastrado
+antes disso (as pendências do **Mirailton Xavier** e do **Erivan Guimarães**,
+entre outras) continua **exatamente com os números que sempre teve**: a % dele
+é fixa sobre o aporte e não acompanha o prazo.
+
+Como funciona por dentro: a partir de agora toda cobrança com investidor nasce
+com o campo `invRegraV2: true`. Quem não tem esse campo é antigo e cai na conta
+velha (`mesesInvestidorDe()` devolve 1). Na tabela, o detalhe 💼 dessas
+cobranças mostra o selo **🔒 regra antiga**.
+
+- **Editar** uma cobrança antiga **não** muda a regra dela — a caixa da divisão
+  no modal avisa isso.
+- Ligar o investidor agora numa cobrança que não tinha → entra na regra nova.
+- **Renovar** cria um empréstimo novo, e o novo já nasce na regra nova.
 
 ### Cadastrar um investidor
 
 Aba **👥 Cadastro** → botão **💼 Investidores**. Informe o nome e a **% padrão**
-dele (o app já sugere 20). Essa % é só o padrão: ao criar o empréstimo dá para
-mudar caso a caso.
+dele — a fatia da % do empréstimo que fica com ele (o app já sugere 20). Essa %
+é só o padrão: ao criar o empréstimo dá para mudar caso a caso.
 
 Os investidores ficam no nó `investidores` do Firebase — separado dos clientes.
 
@@ -175,7 +205,7 @@ mesmo jeito que o recibo do cliente.
 | Investidor          | o nome do investidor, não o do cliente               |
 | Data da Solicitação | a mesma data do empréstimo                           |
 | Valor Investido     | o **aporte** dele                                    |
-| Valor Final         | **aporte + o lucro dele** — R$ 100 a 20% sai R$ 120  |
+| Valor Final         | **aporte + o lucro dele** — R$ 100 a 10%/30 dias sai R$ 110 |
 | Data de Pagamento   | o vencimento do empréstimo                           |
 | Rodapé              | *"Agradeço pela confiança e pela parceria!"* — no lugar do aviso de 5% ao dia |
 
@@ -218,8 +248,9 @@ A divisão completa (lucro do empréstimo, sua parte, a dele) é controle intern
 só existe dentro do app.
 
 Código: bloco `INVESTIDORES — regra de divisão` no `index.html`
-(`temInvestidor`, `aporteDe`, `lucroInvestidorDe`, `devolucaoInvestidorDe`,
-`lucroMeuDe`, `lucroMeuAReceber`) e o emblema em `emblemaInvestidor()`.
+(`temInvestidor`, `aporteDe`, `mesesInvestidorDe`, `regraNovaDe`,
+`lucroInvestidorDe`, `devolucaoInvestidorDe`, `lucroMeuDe`, `lucroMeuAReceber`)
+e o emblema em `emblemaInvestidor()`.
 
 ## Ocultar valores (👁️)
 

@@ -220,6 +220,47 @@
     /* ══ MAIN ══ */
     .main { padding: 16px; max-width: 1400px; margin: 0 auto; }
 
+    /* ══ TELAS GRANDES (PC) ══
+       A aba Clientes ocupa quase toda a largura para a tabela caber inteira,
+       sem arrastar para o lado. Os formulários não acompanham: ficam
+       centralizados numa largura confortável de leitura. Nada aqui afeta o
+       celular — tudo está preso a min-width. */
+    @media (min-width: 1100px) {
+      .main { max-width: 1800px; padding: 16px 22px; }
+
+      /* Formulários param de crescer: só a aba Clientes usa a tela toda */
+      #tab-nova > .card,
+      #tab-cadastro .card {
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* Tabela mais justa, para os botões caberem junto com os dados */
+      #tab-clientes th,
+      #tab-clientes td { padding: 13px 11px; }
+      #tab-clientes th:first-child,
+      #tab-clientes td:first-child { padding-left: 15px; }
+      #tab-clientes th:last-child,
+      #tab-clientes td:last-child  { padding-right: 15px; }
+
+      #tab-clientes .td-acoes { gap: 4px; }
+      #tab-clientes .btn-sm   { padding: 4px 9px; }
+    }
+
+    /* Notebooks e telas com zoom do Windows (a tabela inteira pede ~1320px):
+       aperta mais um pouco para ela ainda caber sem barra lateral. */
+    @media (min-width: 1100px) and (max-width: 1439px) {
+      #tab-clientes table { font-size: 0.8rem; }
+      #tab-clientes th,
+      #tab-clientes td { padding: 11px 7px; }
+      #tab-clientes th:first-child,
+      #tab-clientes td:first-child { padding-left: 12px; }
+      #tab-clientes th:last-child,
+      #tab-clientes td:last-child  { padding-right: 12px; }
+      #tab-clientes .btn-sm { padding: 4px 7px; font-size: 0.7rem; }
+    }
+
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
@@ -1121,6 +1162,91 @@
     .bio-btn-lk:hover { background: #eef3fc; border-color: var(--blue); }
     .setup-pin-area { font-size: 0.84rem; color: var(--text-mid); margin-bottom: 16px; line-height: 1.5; }
 
+    /* ══ CELULAR (iPhone e afins) ══
+       Tudo preso a max-width: nada aqui afeta o PC. */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+    @media (max-width: 640px) {
+      /* Cabeçalho: título à esquerda, "Conectado" à direita sem sobrepor */
+      .app-header { padding: 10px 12px 0; padding-top: max(10px, env(safe-area-inset-top)); }
+      .header-top { justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+      .app-title  { font-size: 0.98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .sync-indicator { position: static; flex: none; font-size: 0.66rem; }
+
+      /* Abas: ícone em cima, nome embaixo — todas iguais, sem quebrar */
+      .tab-btn { padding: 6px 2px 8px; font-size: 0.7rem; white-space: nowrap; }
+      .tab-ico { display: block; font-size: 1.05rem; line-height: 1.3; }
+      .tabs .btn-olho { margin-left: 2px; padding: 4px 6px; }
+
+      .main { padding: 12px; }
+      #alertBanner { margin: 10px 12px 0; }
+      .card { padding: 18px 16px; border-radius: 16px; }
+
+      /* iOS dá zoom sozinho em campos com fonte < 16px e bagunça a tela */
+      input, select, textarea, .search-wrap input, .select-cliente, .cad-busca { font-size: 16px; }
+
+      /* Cards de valores: 2 por linha, número cabendo inteiro */
+      .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .stats-row .stat-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+      .stat-card { padding: 14px 8px; border-radius: 14px; }
+      .stat-label { font-size: 0.66rem; }
+      .stat-value { font-size: 1.12rem; white-space: nowrap; }
+      .resumo-cliente, .painel-venc { padding: 14px; }
+      .pv-grid, .resumo-cliente .resumo-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .pv-item, .resumo-item { padding: 10px 6px; }
+      .pv-valor, .resumo-item .ri-valor { font-size: 0.95rem; white-space: nowrap; }
+
+      /* Filtros ocupando a largura toda */
+      .search-wrap, .select-cliente { min-width: 0; max-width: none; flex: 1 1 100%; }
+      .filter-btn { padding: 6px 12px; }
+
+      /* Tabela de clientes vira uma lista de cartões (sem arrastar pro lado) */
+      #tab-clientes .table-wrap { overflow: visible; box-shadow: none; border-radius: 0; }
+      #tab-clientes table { background: transparent; }
+      #tab-clientes thead { display: none; }
+      #tab-clientes table, #tab-clientes tbody,
+      #tab-clientes tr, #tab-clientes td { display: block; width: 100%; }
+      /* Dados em 2 colunas (rótulo em cima, valor embaixo); nome e botões na largura toda */
+      #tab-clientes tbody tr {
+        display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px;
+        background: var(--white); border-radius: 14px; margin-bottom: 10px;
+        box-shadow: var(--shadow-sm); border: 1px solid rgba(219,225,234,0.8);
+        overflow: hidden; padding: 0 0 8px;
+      }
+      #tab-clientes td {
+        padding: 5px 14px; border-bottom: none; white-space: normal; text-align: left;
+        font-size: 0.88rem; width: auto; min-width: 0;
+      }
+      #tab-clientes td[data-label]::before {
+        content: attr(data-label); display: block; color: var(--text-light);
+        font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+        margin-bottom: 1px;
+      }
+      #tab-clientes td.td-nome, #tab-clientes td.td-acoes-cel, #tab-clientes td[colspan] { grid-column: 1 / -1; }
+      #tab-clientes td.td-nome {
+        display: flex; align-items: center; font-size: 1rem;
+        padding: 11px 14px 9px; margin-bottom: 4px; border-bottom: 1px solid rgba(0,0,0,0.06);
+      }
+      #tab-clientes td.td-nome:hover { border-radius: 0; }
+      #tab-clientes td.td-acoes-cel { padding-top: 10px; }
+      #tab-clientes .td-acoes { flex-wrap: wrap; justify-content: flex-start; gap: 6px; width: 100%; }
+      #tab-clientes .btn-sm { padding: 7px 11px; font-size: 0.78rem; }
+      #tab-clientes td.empty-msg { display: block; text-align: center; background: var(--white); border-radius: 14px; }
+
+      /* Destaques de vencimento: borda lateral no cartão inteiro */
+      #tab-clientes tr.vence-hoje { background: #fffbea; border-left: 4px solid var(--orange); }
+      #tab-clientes tr.atrasado   { background: #ffd6d6; border-left: 4px solid #e05c5c; }
+      #tab-clientes tr.vence-hoje td, #tab-clientes tr.atrasado td { background: transparent !important; border-bottom-color: transparent !important; }
+      #tab-clientes tr.vence-hoje td:first-child, #tab-clientes tr.atrasado td:first-child { border-left: none; }
+      #tab-clientes tr:hover td { background: transparent; }
+
+      /* Detalhe do investidor: cola no cartão de cima */
+      #tab-clientes tr.linha-inv { margin-top: -14px; border-top-left-radius: 0; border-top-right-radius: 0; background: #f2fbf5; }
+      #tab-clientes tr.linha-inv td { padding: 10px 14px; background: transparent !important; border-bottom: none !important; }
+
+      .modal-box { padding: 22px 18px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1193,10 +1319,10 @@
       <div class="sync-indicator" id="syncIndicator">🟢 Conectado</div>
     </div>
     <div class="tabs">
-      <button class="tab-btn active" onclick="showTab('nova')">➕ Nova</button>
-      <button class="tab-btn" onclick="showTab('clientes')">📋 Clientes</button>
-      <button class="tab-btn" onclick="showTab('dashboard')">📊 Dashboard</button>
-      <button class="tab-btn" onclick="showTab('cadastro')">👥 Cadastro</button>
+      <button class="tab-btn active" onclick="showTab('nova')"><span class="tab-ico">➕</span> Nova</button>
+      <button class="tab-btn" onclick="showTab('clientes')"><span class="tab-ico">📋</span> Clientes</button>
+      <button class="tab-btn" onclick="showTab('dashboard')"><span class="tab-ico">📊</span> Dashboard</button>
+      <button class="tab-btn" onclick="showTab('cadastro')"><span class="tab-ico">👥</span> Cadastro</button>
       <button class="btn-olho" id="btnOlho" title="Ocultar/mostrar valores" onclick="toggleValores()">👁️</button>
     </div>
   </div>
@@ -1325,7 +1451,7 @@
               </div>
             </div>
             <div>
-              <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;">% do investidor</label>
+              <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;" title="Fatia da % do empréstimo que fica com ele. Empréstimo a 50% e ele a 10% → 40% são seus.">% do investidor <span style="font-weight:400;color:#aaa">(da % do empréstimo)</span></label>
               <div class="input-wrap">
                 <input type="number" id="invPct" min="0" step="0.01" placeholder="Ex: 20" oninput="calcPreview()" />
                 <span class="suffix">%</span>
@@ -1486,9 +1612,10 @@
         <div class="card">
           <div class="card-title">Cadastro de Investidores</div>
           <p style="font-size:0.82rem;color:#666;margin:-4px 0 14px;">
-            Quem coloca dinheiro nos empréstimos. A <strong>%</strong> é calculada sobre o aporte
-            e é o lucro que você devolve junto com o capital. Ex.: aporte de R$ 100 com 20% → você
-            devolve R$ 120 e o restante do lucro é seu.
+            Quem coloca dinheiro nos empréstimos. A <strong>%</strong> dele é uma <strong>fatia da %
+            do empréstimo</strong>: se você empresta a 50% e ele entra com 10%, 10% são dele e 40%
+            são seus. Ex.: aporte de R$ 100 a 50% por 30 dias → R$ 110 de volta para ele e R$ 40
+            para você. Como é uma fatia da taxa, a parte dele acompanha o prazo (60 dias = o dobro).
           </p>
           <div class="form-grid">
             <div class="form-group full">
@@ -1499,7 +1626,7 @@
               </div>
             </div>
             <div class="form-group full">
-              <label for="novoInvPct">% padrão <span style="font-weight:400;color:#aaa">(sobre o aporte)</span></label>
+              <label for="novoInvPct">% padrão <span style="font-weight:400;color:#aaa">(fatia da % do empréstimo)</span></label>
               <div class="input-wrap">
                 <input type="number" id="novoInvPct" value="20" min="0" step="0.01" placeholder="Ex: 20"
                        onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarInvestidor();}" />
@@ -1625,7 +1752,7 @@
           </div>
         </div>
         <div>
-          <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;">% do investidor</label>
+          <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:5px;" title="Fatia da % do empréstimo que fica com ele. Empréstimo a 50% e ele a 10% → 40% são seus.">% do investidor <span style="font-weight:400;color:#aaa">(da % do empréstimo)</span></label>
           <div class="input-wrap">
             <input type="number" id="editInvPct" min="0" step="0.01" placeholder="Ex: 20" oninput="calcEditarPreview()" />
             <span class="suffix">%</span>
@@ -2297,7 +2424,7 @@ function calcPreview() {
     document.getElementById('resultPreview').style.display = 'none';
     // No modo Valor Fixo o split usa o valor de lucro digitado lá
     const lucroFixo = parseFloat(document.getElementById('fixoValor').value) || 0;
-    desenharSplit('invSplit', lerBlocoInvestidor(0), modoAtual === 'fixo' ? lucroFixo : 0);
+    desenharSplit('invSplit', lerBlocoInvestidor(0), modoAtual === 'fixo' ? lucroFixo : 0, 1);
     preview = null; return;
   }
 
@@ -2318,11 +2445,12 @@ function calcPreview() {
   document.getElementById('resultPreview').style.display = 'block';
 
   // Divisão com o investidor (se o bloco estiver ligado)
-  const inv = lerBlocoInvestidor(valorA);
-  desenharSplit('invSplit', inv, lucro);
+  const inv   = lerBlocoInvestidor(valorA);
+  const meses = dias / 30;
+  desenharSplit('invSplit', inv, lucro, meses);
   if (inv && inv.valido) {
     preview.inv = inv;
-    preview.lucroMeu = lucro - inv.aporte * (inv.pct / 100);
+    preview.lucroMeu = lucro - inv.aporte * (inv.pct / 100) * meses;
   }
   // Com investidor, esse lucro ainda é o bruto — o seu sai na caixa da divisão
   document.getElementById('pLucroLabel').textContent =
@@ -2331,15 +2459,18 @@ function calcPreview() {
 
 // Monta os campos de investidor que vão para o Firebase.
 // Sem investidor, grava null para limpar o que existia.
-function camposInvestidor(inv) {
+// `regraV2` = false mantém o empréstimo na regra antiga (ver mesesInvestidorDe).
+function camposInvestidor(inv, regraV2) {
   if (!inv || !inv.valido) {
-    return { investidorFk: null, investidorNome: null, investidorPct: null, aporte: null };
+    return { investidorFk: null, investidorNome: null, investidorPct: null,
+             aporte: null, invRegraV2: null };
   }
   return {
     investidorFk:   inv.fk,
     investidorNome: inv.nome,
     investidorPct:  inv.pct,
-    aporte:         inv.aporte
+    aporte:         inv.aporte,
+    invRegraV2:     regraV2 === false ? null : true
   };
 }
 
@@ -2626,13 +2757,21 @@ function lucroAReceber(c) {
 // ─────────────────────────────
 //  INVESTIDORES — regra de divisão
 //
-//  O investidor entra com um APORTE (ex.: R$ 100) e recebe de volta o aporte
-//  mais uma PORCENTAGEM sobre ele (ex.: 20% = R$ 20) → devolução de R$ 120.
-//  Todo o resto do lucro é seu. Se o empréstimo saiu a 50% (lucro R$ 50),
-//  sobram R$ 30 para você.
+//  O investidor entra com um APORTE e a % dele é uma FATIA DA % DO EMPRÉSTIMO,
+//  não um pedaço do valor em R$. Empréstimo a 50% com investidor a 10%:
+//  10% são dele e 40% são seus. Sobre um aporte de R$ 100 em 30 dias isso dá
+//  R$ 10 para ele (devolução de R$ 110) e R$ 40 para você.
 //
-//  Os juros de atraso (5%/dia) são 100% seus — a parte do investidor é fixa
-//  no percentual combinado sobre o aporte e não cresce com o atraso.
+//  Por ser uma fatia da taxa, a parte dele corre no mesmo prazo da sua: os
+//  mesmos R$ 100 a 50% por 60 dias rendem R$ 100 de lucro → R$ 20 dele
+//  (10% x 2 meses) e R$ 80 seus. A % incide só sobre o dinheiro dele: se ele
+//  aportou R$ 100 num empréstimo de R$ 300, o lucro dos outros R$ 200 é todo seu.
+//
+//  No modo Valor Fixo não existe taxa nem prazo de juros, então a % dele é
+//  aplicada uma vez só sobre o aporte.
+//
+//  Os juros de atraso (5%/dia) são 100% seus — a parte do investidor não
+//  cresce com o atraso.
 // ─────────────────────────────
 
 // A cobrança foi bancada por um investidor?
@@ -2645,10 +2784,27 @@ function aporteDe(c) {
   return temInvestidor(c) ? (Number(c.aporte) || 0) : 0;
 }
 
-// Lucro que fica com o investidor (% sobre o aporte)
+// Prazo que multiplica a % do investidor: dias/30, o mesmo fator da sua
+// porcentagem. Devolve 1 (sem prazo, a conta antiga) quando:
+//   • o empréstimo é do modo Valor Fixo — não tem taxa nem prazo de juros;
+//   • o empréstimo foi criado ANTES da regra nova (não tem `invRegraV2`).
+// Assim as cobranças antigas continuam com os números que sempre tiveram.
+function mesesInvestidorDe(c) {
+  if (!c || c.tipoFixo || !c.invRegraV2) return 1;
+  const d = Number(c.dias) || 0;
+  return d > 0 ? d / 30 : 0;
+}
+
+// O empréstimo segue a regra nova (% do investidor = fatia da % do empréstimo)?
+function regraNovaDe(c) {
+  return !!(c && c.invRegraV2);
+}
+
+// Lucro que fica com o investidor: a % dele sobre o aporte, pelo mesmo prazo
+// do empréstimo (é uma fatia da % do empréstimo, não do valor em R$)
 function lucroInvestidorDe(c) {
   if (!temInvestidor(c)) return 0;
-  return aporteDe(c) * ((Number(c.investidorPct) || 0) / 100);
+  return aporteDe(c) * ((Number(c.investidorPct) || 0) / 100) * mesesInvestidorDe(c);
 }
 
 // Total que volta para o investidor: aporte + lucro dele
@@ -2945,23 +3101,28 @@ function lerBlocoInvestidor(valorBase) {
   };
 }
 
-// Desenha a caixinha "X é dele, X é seu"
-function desenharSplit(elId, inv, lucroTotal) {
+// Desenha a caixinha "X é dele, X é seu".
+// `meses` = dias/30 do empréstimo (1 no modo Valor Fixo): a % dele rende pelo
+// mesmo prazo que a sua.
+function desenharSplit(elId, inv, lucroTotal, meses, regraAntiga) {
   const el = document.getElementById(elId);
   if (!el) return;
   if (!inv || !inv.valido) { el.style.display = 'none'; el.innerHTML = ''; return; }
 
-  const lucroDele = inv.aporte * (inv.pct / 100);
+  const m         = (meses == null || isNaN(meses)) ? 1 : meses;
+  const lucroDele = inv.aporte * (inv.pct / 100) * m;
   const devolucao = inv.aporte + lucroDele;
   const lucroMeu  = lucroTotal - lucroDele;
+  const prazoTxt  = (m === 1) ? '' : ` × ${fmtPct(m)} ${m < 1 ? 'mês' : 'meses'}`;
 
   el.style.display = 'block';
   el.className = 'full inv-split';
   el.innerHTML = `
     <div class="is-row"><span>Aporte de ${inv.nome || 'investidor'}</span><span>${fmt(inv.aporte)}</span></div>
-    <div class="is-row"><span>Lucro do investidor (${fmtPct(inv.pct)}% do aporte)</span><span class="is-dele">${fmt(lucroDele)}</span></div>
+    <div class="is-row"><span>Lucro do investidor (${fmtPct(inv.pct)}%${prazoTxt})</span><span class="is-dele">${fmt(lucroDele)}</span></div>
     <div class="is-row"><span><strong>Devolver ao investidor</strong></span><span class="is-dele">${fmt(devolucao)}</span></div>
     <div class="is-row"><span><strong>Seu lucro</strong></span><span class="is-meu">${fmt(lucroMeu)}</span></div>
+    ${regraAntiga ? `<div class="is-row" style="opacity:.75;font-size:0.76rem"><span>🔒 Cobrança na regra antiga: a % dele é fixa sobre o aporte, sem acompanhar o prazo.</span><span></span></div>` : ''}
     ${lucroMeu < 0 ? `<div class="inv-aviso">⚠️ O lucro do investidor está maior que o lucro do empréstimo — você fica no prejuízo.</div>` : ''}`;
 }
 
@@ -3225,15 +3386,15 @@ function renderTabela() {
 
     const linhaPrincipal = `<tr${trClass}>
       <td class="td-nome" onclick="selecionarCliente('${nomeEsc}')">${marcador}<strong>${c.nome}</strong></td>
-      <td>${c.dataSolic}</td>
-      <td class="td-money">${fmt(c.valorA)}</td>
-      <td>${c.pct > 0 ? c.pct+'%' : '—'}</td>
-      <td>${c.dias}d</td>
-      <td class="td-money"><strong>${fmt(c.valorFinal)}</strong></td>
-      <td class="td-money" style="color:${meuLucro < 0 ? 'var(--red)' : 'var(--green)'}">${fmt(meuLucro)}</td>
-      <td>${c.dataPag}</td>
-      <td>${badge}</td>
-      <td>
+      <td data-label="Dt. Solicitação">${c.dataSolic}</td>
+      <td data-label="Val. Solicitado" class="td-money">${fmt(c.valorA)}</td>
+      <td data-label="%">${c.pct > 0 ? c.pct+'%' : '—'}</td>
+      <td data-label="Dias">${c.dias}d</td>
+      <td data-label="Val. Final" class="td-money"><strong>${fmt(c.valorFinal)}</strong></td>
+      <td data-label="Lucro (Meu)" class="td-money" style="color:${meuLucro < 0 ? 'var(--red)' : 'var(--green)'}">${fmt(meuLucro)}</td>
+      <td data-label="Dt. Pagamento">${c.dataPag}</td>
+      <td data-label="Status">${badge}</td>
+      <td class="td-acoes-cel">
         <div class="td-acoes">
           ${btnPendente}
           ${btnRenovar}
@@ -3249,16 +3410,22 @@ function renderTabela() {
     let linhaDetalhe = '';
     if (comInv && linhasInvAbertas.has(c.fk)) {
       const lucroDele = lucroInvestidorDe(c);
+      const mesesInv  = mesesInvestidorDe(c);
+      const prazoInv  = mesesInv === 1 ? '' : ` × ${fmtPct(mesesInv)} ${mesesInv < 1 ? 'mês' : 'meses'}`;
+      const chipRegra = (!regraNovaDe(c) && !c.tipoFixo)
+        ? `<span class="inv-chip" title="Empréstimo anterior à regra nova: a % dele é fixa sobre o aporte, sem acompanhar o prazo. Fica como sempre foi.">🔒 regra antiga</span>`
+        : '';
       const atrasoInv = diasAteVencer(c.dataPagISO) < 0 && c.status !== 'pago' ? calcAtraso(c).juros : 0;
       linhaDetalhe = `<tr class="linha-inv"><td colspan="10">
         <div class="inv-detalhe">
           <span class="inv-chip chip-nome">${emblemaInvestidor(c)}${nomeInvestidor(c)}</span>
           <span class="inv-chip">Aporte <b>${fmt(aporteDe(c))}</b></span>
           <span class="inv-chip">Lucro do empréstimo <b>${fmt(c.lucro)}</b></span>
-          <span class="inv-chip chip-dele">Lucro do investidor (${fmtPct(c.investidorPct)}%) <b>${fmt(lucroDele)}</b></span>
+          <span class="inv-chip chip-dele">Lucro do investidor (${fmtPct(c.investidorPct)}%${prazoInv}) <b>${fmt(lucroDele)}</b></span>
           <span class="inv-chip chip-dele">Devolver <b>${fmt(devolucaoInvestidorDe(c))}</b></span>
           <span class="inv-chip chip-meu">Seu lucro <b>${fmt(meuLucro)}</b></span>
           ${atrasoInv > 0 ? `<span class="inv-chip chip-meu">Juros do atraso (só seus) <b>${fmt(atrasoInv)}</b></span>` : ''}
+          ${chipRegra}
           <button class="inv-chip btn-recibo-inv" title="Baixar o recibo de ${nomeInvestidor(c)} em imagem" onclick="gerarReciboInvestidor('${c.fk}')">🧾 Recibo do investidor</button>
         </div>
       </td></tr>`;
@@ -3401,6 +3568,8 @@ function confirmarRenovacao() {
         novo.investidorNome = c.investidorNome || nomeInvestidor(c);
         novo.investidorPct  = Number(c.investidorPct) || 0;
         novo.aporte         = aporteDe(c);
+        novo.invRegraV2     = true;   // empréstimo novo entra na regra nova
+
       }
       return db.ref('clientes').push(novo);
     })
@@ -3485,6 +3654,15 @@ function onTrocarInvestidorEditar() {
   calcEditarPreview();
 }
 
+// Qual regra vale para o registro aberto no modal Editar.
+// Cobrança antiga que já tem investidor continua na regra antiga mesmo depois
+// de editada; qualquer outra (nova, ou que está ganhando investidor agora)
+// entra na regra nova.
+function regraV2Editar() {
+  const c = clientesCache.find(x => x.fk === pendingEditarKey);
+  return (c && temInvestidor(c)) ? regraNovaDe(c) : true;
+}
+
 // Lê o bloco de investidor do modal Editar. Devolve null se estiver desligado.
 function lerBlocoInvestidorEditar() {
   if (!document.getElementById('editInvAtivo').checked) return null;
@@ -3522,7 +3700,7 @@ function calcEditarPreview() {
     prevEl.style.display = 'none';
     // No modo Valor Fixo o lucro é o próprio valor digitado
     const lucroFixo = parseFloat(document.getElementById('editFixoValor').value) || 0;
-    desenharSplit('editInvSplit', invEd, editarModoAtual === 'fixo' ? lucroFixo : 0);
+    desenharSplit('editInvSplit', invEd, editarModoAtual === 'fixo' ? lucroFixo : 0, 1, !regraV2Editar());
     return;
   }
   const lucro      = valorA * (pct / 100) * (dias / 30);
@@ -3534,7 +3712,7 @@ function calcEditarPreview() {
   document.getElementById('epDataPag').textContent    = isoParaBR(dataPagISO);
   prevEl.style.display = 'block';
 
-  desenharSplit('editInvSplit', invEd, lucro);
+  desenharSplit('editInvSplit', invEd, lucro, regraV2Editar() ? dias / 30 : 1, !regraV2Editar());
 }
 
 function salvarEdicao() {
@@ -3566,7 +3744,7 @@ function salvarEdicao() {
       valorFinal: valor, lucro: valor,
       dataPagISO: dataPag, dataPag: isoParaBR(dataPag),
       tipoFixo: true,
-      ...camposInvestidor(invEd)
+      ...camposInvestidor(invEd, regraV2Editar())
     };
   } else {
     const nome   = document.getElementById('editNome').value.trim();
@@ -3588,7 +3766,7 @@ function salvarEdicao() {
       valorA, pct, dias, valorFinal, lucro,
       dataPagISO, dataPag: isoParaBR(dataPagISO),
       tipoFixo: null,   // null remove o campo se existia
-      ...camposInvestidor(invEd)
+      ...camposInvestidor(invEd, regraV2Editar())
     };
   }
 
